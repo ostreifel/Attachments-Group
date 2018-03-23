@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <script src="dist/VSS.SDK.min.js"></script>
+    <link href="dist/imageGroup.css" rel="stylesheet" />
+</head>
+<body>
+    <script type="text/javascript">
+          
+
+        // Initialize framework 
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true,
+            configureModuleLoader: true
+        });
+        
+        // Load main entry point for extension
+        VSS.require(["dist/registerImageGroup"], function () {
+            // Loading succeeded
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+    <span class="bowtie-icon bowtie-status-info info" tabindex="0">
+            <div class="callout">
+                <div class="message">Thank you for using the Image Group Extension!</div>
+                <a href="https://marketplace.visualstudio.com/items?itemName=ottostreifel.image-group#review-details" target="_blank">Write a review</a>
+                | <a href="https://github.com/ostreifel/Image-Group/issues" target="_blank">Report an issue</a>
+                <!-- | <a href="mailto:limagegroup@microsoft.com" target="_blank">Feedback and suggestions</a> -->
+            </div>
+    </span>
+    <div class="main-content">
+        <div id="image-container"></div>
+        <div class="status-message"></div>
+        <div class="error-message"></div>
+    </div>
+</body>
+</html>

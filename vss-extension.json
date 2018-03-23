@@ -1,0 +1,69 @@
+{
+    "manifestVersion": 1,
+    "id": "image-group",
+    "version": "0.0.1",
+    "name": "Image Group",
+    "scopes": [ "vso.work", "vso.work_write" ],
+    "description": "Preview image attachments from the work item from",
+    "publisher": "ottostreifel",
+    "icons": {
+        "default": "img/logo.png"
+    },
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "tags": [
+        "Work Item",
+        "Group",
+        "Productivity",
+        "Attachment",
+        "Image",
+        "Form"
+    ],
+    "content": {
+        "details": {
+            "path": "details.md"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/ostreifel/Image-Group"
+    },
+    "branding": {
+        "color": "rgb(220, 235, 252)",
+        "theme": "light"
+    },
+    "files": [
+        {
+            "path": "img",
+            "addressable": true
+        },
+        {
+            "path": "dist",
+            "addressable": true
+        },
+        {
+            "path": "imageGroup.html",
+            "addressable": true
+        }
+    ],
+    "categories": [
+        "Plan and track"
+    ],
+    "contributions": [
+        {
+            "id": "imgae-group",
+            "type": "ms.vss-work-web.work-item-form-group",
+            "description": "Show images associated with the current workitem",
+            "targets": [
+                "ms.vss-work-web.work-item-form"
+            ],
+            "properties": {
+                "name": "Images",
+                "uri": "imageGroup.html"
+            }
+        }
+    ]
+}

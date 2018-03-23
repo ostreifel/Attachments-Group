@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "target": "es5",
+        "sourceMap": false,
+        "rootDir": "./scripts",
+        "moduleResolution": "node",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "jsx": "react",
+        "lib": [
+            "es2015.promise",
+            "dom",
+            "es5"
+        ],
+        "experimentalDecorators": true
+    }
+}
