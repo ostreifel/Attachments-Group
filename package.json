@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ostreifel/Image-Group#readme",
   "devDependencies": {
     "@types/applicationinsights-js": "^1.0.5",
+    "@types/react-dom": "^16.0.4",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
     "gulp-rename": "^1.2.2",
