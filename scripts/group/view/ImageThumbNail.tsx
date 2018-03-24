@@ -1,6 +1,6 @@
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
-import { IImageAttachment } from "../IImageAttachment";
+import { IImageAttachment } from "../../IImageAttachment";
 
 export interface ImageThumbNailProps {
     image: IImageAttachment;
