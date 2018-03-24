@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { DelayedFunction } from "VSS/Utils/Core";
-import { IImageAttachment } from "../IImageAttachment";
+import { IImageAttachment } from "../../IImageAttachment";
 import { ImageThumbnails } from "./ImageThumbNails";
 
 function resize() {

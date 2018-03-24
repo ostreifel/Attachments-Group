@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = {
     entry: {
-        registerImageGroup: "./scripts/registerImageGroup.ts",
+        registerImageGroup: "./scripts/group/registerImageGroup.ts",
     },
     output: {
         libraryTarget: "amd",

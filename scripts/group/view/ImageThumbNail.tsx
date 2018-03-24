@@ -9,9 +9,10 @@ export interface ImageThumbNailProps {
 export class ImageThumbNail extends React.Component<ImageThumbNailProps, {}> {
     public render() {
         const { image } = this.props;
+        const imageUrl = `${image.url}?filename=${image.attributes.name}`;
         return <a
             className="thumbnail-tile"
-            href={image.url}
+            href={imageUrl}
             onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -28,7 +29,7 @@ export class ImageThumbNail extends React.Component<ImageThumbNailProps, {}> {
             }}
         >
             <div className="thumb-box">
-                <img className="image-thumbnail" src={image.url} />
+                <img className="image-thumbnail" src={imageUrl} />
             </div>
             <div className="title">{image.attributes.name}</div>
         </a>;

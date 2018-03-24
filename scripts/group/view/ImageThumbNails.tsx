@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IImageAttachment } from "../IImageAttachment";
+import { IImageAttachment } from "../../IImageAttachment";
 import { ImageThumbNail } from "./ImageThumbNail";
 
 export interface IImageThumbNailsProps {
