@@ -23,6 +23,16 @@
     }
 }
 .main-content {
+    #image-container .image-thumbnails {
+        display: flex;
+        padding: 5px;
+        .image-thumbnail {
+            max-width: 50px;
+            max-height: 50px;
+            border: 1px solid black;
+            margin: 5px;
+        }
+    }
     .error-message {
         color: red;
     }

@@ -1,4 +1,8 @@
+import { /*WorkItem, */WorkItemExpand } from "TFS/WorkItemTracking/Contracts";
+import { getClient } from "TFS/WorkItemTracking/RestClient";
+import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { IProperties, trackEvent } from "./events";
+import { IImageAttachment } from "./IImageAttachment";
 import { setError, setStatus, showImages } from "./view/showImages";
 
 async function tryExecute(callback: () => Promise<void>) {
@@ -26,12 +30,18 @@ function getProps(): IProperties {
     };
 }
 
+let images: IImageAttachment[];
+
+const imageRegex = /\.jpe?g$|\.gif$|\.png$|\.bmp$|\.png$/i;
 export async function refreshImages(): Promise<void> {
     tryExecute(async () => {
         trackEvent("refresh", {new: "false", ...getProps()});
-        // const formService = await WorkItemFormService.getService();
-        // wi = await getClient().getWorkItem(await formService.getId(), undefined, undefined, WorkItemExpand.Links);
-        // wi.relations.
-        showImages();
+        const formService = await WorkItemFormService.getService();
+        const id = await formService.getId();
+        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+        images = wi.relations.filter((r) =>
+            r.rel === "AttachedFile" && imageRegex.test(r.attributes.name),
+        ) as IImageAttachment[];
+        showImages(images);
     });
 }

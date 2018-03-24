@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { DelayedFunction } from "VSS/Utils/Core";
-import { Images } from "./Images";
+import { IImageAttachment } from "../IImageAttachment";
+import { ImageThumbnails } from "./ImageThumbNails";
 
 function resize() {
     const altMin = $(".callout").outerHeight();
@@ -41,9 +42,9 @@ export function setError(message: string) {
     resize();
 }
 
-export function showImages() {
+export function showImages(images: IImageAttachment[]) {
     return new Promise<void>((resolve) => {
-        ReactDOM.render(<Images />, document.getElementById("image-container"), () => {
+        ReactDOM.render(<ImageThumbnails images={images}/>, document.getElementById("image-container"), () => {
             afterRender();
             resolve();
         });
