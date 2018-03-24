@@ -43,7 +43,7 @@ export function setError(message: string) {
 
 export function showImages() {
     return new Promise<void>((resolve) => {
-        ReactDOM.render(<Images />, document.getElementById("links-container"), () => {
+        ReactDOM.render(<Images />, document.getElementById("image-container"), () => {
             afterRender();
             resolve();
         });

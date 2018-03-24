@@ -1,10 +1,10 @@
 {
     "manifestVersion": 1,
     "id": "image-group",
-    "version": "0.0.2",
+    "version": "0.0.4",
     "name": "Image Group",
     "scopes": [ "vso.work", "vso.work_write" ],
-    "description": "Preview image attachments from the work item from",
+    "description": "Preview image attachments from the work item form",
     "publisher": "ottostreifel",
     "icons": {
         "default": "img/logo.png"

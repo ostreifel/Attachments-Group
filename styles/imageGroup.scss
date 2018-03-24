@@ -1,0 +1,29 @@
+.info {
+    float: right;
+    &:not(:hover):not(:focus) .callout {
+        visibility: hidden;
+    }
+    .callout {
+        font-family: "-apple-system",BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Ubuntu,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+        color: black;
+        border: solid 2px #eaeaea;
+        text-align: center;
+        position: absolute;
+        z-index: 1;
+        top: 1em;
+        right: 0px;
+        width: 350px;
+        max-width: 100%;
+        margin-left: -100px;
+        background-color: white;
+        padding: 8px;
+        .message {
+            margin-bottom: 10px;
+        }
+    }
+}
+.main-content {
+    .error-message {
+        color: red;
+    }
+}
