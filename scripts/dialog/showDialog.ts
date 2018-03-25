@@ -4,18 +4,18 @@ import { IContextOptions } from "./IContextOptions";
 
 export async function showDialog(images: IImageAttachment[], idx: number) {
     const dialogService = (await VSS.getService(VSS.ServiceIds.Dialog)) as IHostDialogService;
-    let closeDialog = () => {
-        // tslint:disable-next-line:no-console
-        console.log("could not find close dialog function");
-    };
-    function close() {
-        trackEvent("keyboardExit");
-        closeDialog();
-    }
+    let closeDialog: () => void;
+    let setTitle: (title: string) => undefined;
     const context: IContextOptions = {
         images,
         idx,
-        close,
+        setTitle: (title: string) => {
+            setTitle(title);
+        },
+        close: () => {
+            trackEvent("keyboardExit");
+            closeDialog();
+        },
     };
     const dialogOptions: IHostDialogOptions = {
         title: images[idx].attributes.name,
@@ -28,6 +28,7 @@ export async function showDialog(images: IImageAttachment[], idx: number) {
 
     const contentContribution = `${extInfo.publisherId}.${extInfo.extensionId}.imageGallery`;
     const dialog = await dialogService.openDialog(contentContribution, dialogOptions, context);
+    setTitle = (title: string) => dialog.setTitle(title);
     closeDialog = () => dialog.close();
     /* const callbacks: ICallbacks =  */
     await dialog.getContributionInstance("imageGallery");

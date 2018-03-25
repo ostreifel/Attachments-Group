@@ -1,12 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IImageAttachment } from "../IImageAttachment";
-import { Gallery } from "./view/Gallery";
+import { Gallery, IGalleryProps } from "./view/Gallery";
 
-export function showGallery(images: IImageAttachment[], idx: number) {
+export function showGallery(props: IGalleryProps) {
     return new Promise((resolve) => {
         const container = document.getElementById("gallery-wrapper");
-        ReactDOM.render(<Gallery images={images} idx={idx}/>, container, () => {
+        ReactDOM.render(<Gallery {...props}/>, container, () => {
             resolve();
         });
     });

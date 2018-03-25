@@ -6,6 +6,7 @@ const {
     images,
     idx,
     close,
+    setTitle,
 } = VSS.getConfiguration() as IContextOptions;
 
 $(window).bind("keydown", (event) => {
@@ -14,7 +15,7 @@ $(window).bind("keydown", (event) => {
     }
 });
 
-showGallery(images, idx).then(() => {
+showGallery({images, idx, setTitle}).then(() => {
     $(".gallery-image.center").focus();
 });
 

@@ -6,6 +6,7 @@ import { showGallery } from "../showGallery";
 export interface IGalleryProps {
     images: IImageAttachment[];
     idx: number;
+    setTitle: (title: string) => void;
 }
 
 function getImageUrl(image?: IImageAttachment) {
@@ -14,8 +15,9 @@ function getImageUrl(image?: IImageAttachment) {
 
 export class Gallery extends React.Component<IGalleryProps, {}> {
     public render() {
-        const {images, idx} = this.props;
+        const {images, idx, setTitle} = this.props;
         const image = images[idx];
+        setTitle(image.attributes.name);
         const imageUrl = getImageUrl(image);
         const prevImageUrl = getImageUrl(images[idx - 1]);
         const nextImageUrl = getImageUrl(images[idx + 1]);
@@ -81,6 +83,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
         if (idx < 0 || idx >= this.props.images.length) {
             return;
         }
-        showGallery(this.props.images, idx);
+        const {images, setTitle} = this.props;
+        showGallery({images, setTitle, idx});
     }
 }
