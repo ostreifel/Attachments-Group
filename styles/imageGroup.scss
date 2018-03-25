@@ -28,9 +28,15 @@
         flex-wrap: wrap;
         padding: 5px;
         .thumbnail-tile {
-            border: 1px solid black;
             margin: 5px;
             padding: 5px;
+            border: 1px solid transparent;
+            &:focus {
+                background-color: aliceblue;
+            }
+            &:hover {
+                border: 1px solid black;
+            }
             .thumb-box {
                 width: 100px;
                 height: 100px;
@@ -53,6 +59,14 @@
         .add-image {
             .file-input {
                 display: none;
+            }
+            .add-button {
+                &:focus {
+                    background-color: aliceblue;
+                }
+                &:hover {
+                    border: 1px solid black;
+                }
             }
         }
     }

@@ -20,7 +20,7 @@
             border: 1px solid gray;
             &.center {
                 max-height: 100%;
-                max-width: calc(100% - 120);
+                max-width: calc(100% - 120px);
             }
             &:focus {
                 outline: 2px solid white;
