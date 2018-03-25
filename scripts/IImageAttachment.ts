@@ -11,5 +11,6 @@ export interface IImageAttachment extends WorkItemRelation {
         revizedDate: string;
         resourceSize: number;
         name: string;
+        comment?: string;
     };
 }

@@ -42,7 +42,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                     }
                 }}
                 tabIndex={0}
-                hidden={!!prevImageUrl}
+                title="Hotkey: ◀"
             >
                 <div className="image-wrapper">
                     <img className="gallery-image" src={prevImageUrl} />
@@ -54,6 +54,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
             src={imageUrl}
             role="button"
             tabIndex={0}
+            title={image.attributes.comment}
         />
         {nextImageUrl ?
             <div className="next nav-button"
@@ -65,7 +66,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                     }
                 }}
                 tabIndex={0}
-                hidden={!!nextImageUrl}
+                title="Hotkey: ▶"
             >
                 <div className="image-wrapper">
                     <img className="gallery-image" src={nextImageUrl} />
