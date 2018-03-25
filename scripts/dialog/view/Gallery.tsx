@@ -7,6 +7,7 @@ export interface IGalleryProps {
     images: IImageAttachment[];
     idx: number;
     setTitle: (title: string) => void;
+    close: () => void;
 }
 
 function getImageUrl(image?: IImageAttachment) {
@@ -28,19 +29,20 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                     return;
                 }
                 if (e.keyCode === KeyCode.RIGHT) {
-                    this.navigate(1);
+                    this.navigate(e, 1);
                 } else if (e.keyCode === KeyCode.LEFT) {
-                    this.navigate(-1);
+                    this.navigate(e, -1);
                 }
             }}
+            onClick={() => this.props.close()}
         >
         {prevImageUrl ?
             <div className="prev nav-button"
                 role="button"
-                onClick={() => this.navigate(-1)}
+                onClick={(e) => this.navigate(e, -1)}
                 onKeyDown={(e) => {
                     if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
-                        this.navigate(-1);
+                        this.navigate(e, -1);
                     }
                 }}
                 tabIndex={0}
@@ -57,14 +59,15 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
             role="button"
             tabIndex={0}
             title={image.attributes.comment}
+            onClick={(e) => e.stopPropagation()}
         />
         {nextImageUrl ?
             <div className="next nav-button"
                 role="button"
-                onClick={() => this.navigate(1)}
+                onClick={(e) => this.navigate(e, 1)}
                 onKeyDown={(e) => {
                     if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
-                        this.navigate(1);
+                        this.navigate(e, 1);
                     }
                 }}
                 tabIndex={0}
@@ -78,12 +81,13 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
       </div>;
     }
 
-    private navigate(dir: -1 | 1) {
+    private navigate(e: React.SyntheticEvent<HTMLDivElement>, dir: -1 | 1) {
+        e.stopPropagation();
         const idx = this.props.idx + dir;
         if (idx < 0 || idx >= this.props.images.length) {
             return;
         }
-        const {images, setTitle} = this.props;
-        showGallery({images, setTitle, idx});
+        const {images, setTitle, close} = this.props;
+        showGallery({images, setTitle, idx, close});
     }
 }

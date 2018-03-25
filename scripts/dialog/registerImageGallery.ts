@@ -15,7 +15,7 @@ $(window).bind("keydown", (event) => {
     }
 });
 
-showGallery({images, idx, setTitle}).then(() => {
+showGallery({images, idx, setTitle, close}).then(() => {
     $(".gallery-image.center").focus();
 });
 

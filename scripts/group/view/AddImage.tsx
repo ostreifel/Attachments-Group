@@ -6,7 +6,13 @@ export class AddImage extends React.Component<{}, {}> {
     public render() {
         return <div className="add-image">
             <form className="file-form">
-                <input className="file-input" accept="image/*" type="file" onChange={(e) => this.onChange(e)}/>
+                <input
+                    className="file-input"
+                    accept="image/*"
+                    type="file"
+                    onChange={(e) => this.onChange(e)}
+                    multiple={true}
+                />
             </form>
             <ActionButton
                 onClick={() => $(".file-input").click()}
