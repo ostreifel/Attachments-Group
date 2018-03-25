@@ -5,7 +5,9 @@ import { addFiles } from "../imageManager";
 export class AddImage extends React.Component<{}, {}> {
     public render() {
         return <div className="add-image">
-            <input className="file-input" accept="image/*" type="file" onChange={(e) => this.onChange(e)}/>
+            <form className="file-form">
+                <input className="file-input" accept="image/*" type="file" onChange={(e) => this.onChange(e)}/>
+            </form>
             <ActionButton
                 onClick={() => $(".file-input").click()}
                 className="add-button"
@@ -18,10 +20,11 @@ export class AddImage extends React.Component<{}, {}> {
             </ActionButton>
         </div>;
     }
-    private onChange(
+    private async onChange(
         e: React.ChangeEvent<HTMLInputElement>,
-    ): void {
+    ) {
         const { files } = e.currentTarget;
-        addFiles(files);
+        await addFiles(files);
+        ($(".file-form")[0] as HTMLFormElement).reset();
     }
 }
