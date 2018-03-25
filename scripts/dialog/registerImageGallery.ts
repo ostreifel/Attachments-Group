@@ -14,6 +14,8 @@ $(window).bind("keydown", (event) => {
     }
 });
 
-showGallery(images, idx);
+showGallery(images, idx).then(() => {
+    $(".gallery-image.center").focus();
+});
 
 VSS.register("imageGallery", {});

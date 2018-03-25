@@ -22,6 +22,9 @@
                 max-height: 100%;
                 max-width: calc(100% - 120);
             }
+            &:focus {
+                outline: 2px solid white;
+            }
         }
         .nav-button {
             width: 50px;
@@ -29,14 +32,14 @@
             display: flex;
             overflow: hidden;
             cursor: pointer;
-            &:focus {
-                outline: 2px solid white;
-            }
             &.prev {
                 justify-content: flex-end;
             }
             &.next {
                 justify-content: flex-start;
+            }
+            &:focus {
+                outline: 2px solid white;
             }
             .image-wrapper {
                 max-height: 100%;

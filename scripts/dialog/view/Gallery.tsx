@@ -49,7 +49,12 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                 </div>
             </div> : <div />
         }
-       <img className="gallery-image center" src={imageUrl} />
+        <img
+            className="gallery-image center"
+            src={imageUrl}
+            role="button"
+            tabIndex={0}
+        />
         {nextImageUrl ?
             <div className="next nav-button"
                 role="button"
