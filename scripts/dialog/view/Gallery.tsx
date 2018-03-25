@@ -10,7 +10,7 @@ export interface IGalleryProps {
 }
 
 function getImageUrl(image?: IImageAttachment) {
-    return image && `${image.url}?filename${image.attributes.name}`;
+    return image && `${image.url}?filename=${image.attributes.name}`;
 }
 
 export class Gallery extends React.Component<IGalleryProps, {}> {

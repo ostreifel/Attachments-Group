@@ -1,6 +1,7 @@
-import { /*WorkItem, */WorkItemExpand } from "TFS/WorkItemTracking/Contracts";
+import { AttachmentReference, WorkItem, WorkItemExpand } from "TFS/WorkItemTracking/Contracts";
 import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
+import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Contracts";
 import { IProperties, trackEvent } from "../events";
 import { IImageAttachment } from "../IImageAttachment";
 import { setError, setStatus, showImages } from "./view/showImages";
@@ -25,23 +26,57 @@ async function tryExecute(callback: () => Promise<void>) {
 
 function getProps(): IProperties {
     return {
-        // wiCount: Object.keys(wis).length + "",
-        // relCount: rels.length + "",
+        images: images.length + "",
     };
 }
 
-let images: IImageAttachment[];
+let images: IImageAttachment[] = [];
 
 const imageRegex = /\.jpe?g$|\.gif$|\.png$|\.bmp$|\.png$/i;
+async function update(wi: WorkItem) {
+    images = (wi.relations || []).filter((r) =>
+        r.rel === "AttachedFile" && imageRegex.test(r.attributes.name),
+    ) as IImageAttachment[];
+    showImages(images);
+}
+
 export async function refreshImages(): Promise<void> {
     tryExecute(async () => {
         trackEvent("refresh", {new: "false", ...getProps()});
         const formService = await WorkItemFormService.getService();
         const id = await formService.getId();
         const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        images = wi.relations.filter((r) =>
-            r.rel === "AttachedFile" && imageRegex.test(r.attributes.name),
-        ) as IImageAttachment[];
-        showImages(images);
+        update(wi);
     });
+}
+
+export async function addFiles(files: FileList) {
+    if (!files || files.length === 0) {
+        return;
+    }
+    trackEvent("add", {adding: files.length + "", ...getProps()});
+    const readerPromises: IPromise<AttachmentReference>[] = [];
+    for (let i = 0; i < files.length; i++) {
+        const file = files.item(i);
+        readerPromises.push(getClient().createAttachment(file, file.name));
+    }
+    const refs = await Promise.all(readerPromises);
+    const formService = await WorkItemFormService.getService();
+    const id = await formService.getId();
+    const patch: JsonPatchDocument & JsonPatchOperation[] = refs.map((ref): JsonPatchOperation => (
+        {
+            op: Operation.Add,
+            path: "/relations/-",
+            value: {
+                rel: "AttachedFile",
+                url: ref.url,
+                attributes: {
+                    comment: "Created from the image group extension",
+                },
+            },
+        } as JsonPatchOperation
+    ));
+
+    const wi = await getClient().updateWorkItem(patch, id);
+    await update(wi);
 }

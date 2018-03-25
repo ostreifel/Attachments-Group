@@ -6,7 +6,7 @@ export class ImageGroupFormEvents implements IWorkItemNotificationListener {
         refreshImages();
     }
     public onFieldChanged(/*fieldChangedArgs: IWorkItemFieldChangedArgs*/): void {
-        refreshImages();
+        // refreshImages();
     }
     public onSaved(/*savedEventArgs: IWorkItemChangedArgs*/): void {
         return;
@@ -15,7 +15,7 @@ export class ImageGroupFormEvents implements IWorkItemNotificationListener {
         refreshImages();
     }
     public onReset(/*undoEventArgs: IWorkItemChangedArgs*/): void {
-        refreshImages();
+        // refreshImages();
     }
     public onUnloaded(/*unloadedEventArgs: IWorkItemChangedArgs*/): void {
         // throw new Error("Method not implemented.");
