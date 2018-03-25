@@ -1,14 +1,17 @@
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
+import { showDialog } from "../../dialog/showDialog";
 import { IImageAttachment } from "../../IImageAttachment";
 
 export interface ImageThumbNailProps {
-    image: IImageAttachment;
+    idx: number;
+    images: IImageAttachment[];
 }
 
 export class ImageThumbNail extends React.Component<ImageThumbNailProps, {}> {
     public render() {
-        const { image } = this.props;
+        const { images, idx } = this.props;
+        const image = images[idx];
         const imageUrl = `${image.url}?filename=${image.attributes.name}`;
         return <a
             className="thumbnail-tile"
@@ -16,15 +19,13 @@ export class ImageThumbNail extends React.Component<ImageThumbNailProps, {}> {
             onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // tslint:disable-next-line:no-console
-                console.log("todo show dialog");
+                showDialog(images, idx);
             }}
             onKeyDown={(e) => {
                 if (e.keyCode === KeyCode.ENTER) {
                     e.preventDefault();
                     e.stopPropagation();
-                    // tslint:disable-next-line:no-console
-                    console.log("todo show dialog");
+                    showDialog(images, idx);
                 }
             }}
         >

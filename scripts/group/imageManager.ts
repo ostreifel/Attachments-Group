@@ -1,8 +1,8 @@
 import { /*WorkItem, */WorkItemExpand } from "TFS/WorkItemTracking/Contracts";
 import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
+import { IProperties, trackEvent } from "../events";
 import { IImageAttachment } from "../IImageAttachment";
-import { IProperties, trackEvent } from "./events";
 import { setError, setStatus, showImages } from "./view/showImages";
 
 async function tryExecute(callback: () => Promise<void>) {

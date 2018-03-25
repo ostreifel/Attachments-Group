@@ -7,8 +7,9 @@ export interface IImageThumbNailsProps {
 }
 export class ImageThumbnails extends React.Component<IImageThumbNailsProps, {}> {
     public render() {
+        const {images} = this.props;
         return <div className="image-thumbnails">
-            {this.props.images.map((i) => <ImageThumbNail image={i} />)}
+            {images.map((_, idx) => <ImageThumbNail images={images} idx={idx} />)}
         </div>;
     }
 }

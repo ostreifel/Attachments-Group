@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <script src="dist/VSS.SDK.min.js"></script>
+    <link href="dist/imageGallery.css" rel="stylesheet" />
+</head>
+<body class="gallery-body">
+    <script type="text/javascript">
+          
+
+        // Initialize framework 
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true,
+            configureModuleLoader: true
+        });
+        
+        // Load main entry point for extension
+        VSS.require(["dist/registerImageGallery"], function () {
+            // Loading succeeded
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+    <div id="gallery-wrapper">
+    </div>
+</body>
+</html>

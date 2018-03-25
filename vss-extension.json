@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "image-group",
-    "version": "0.0.14",
+    "version": "0.0.36",
     "name": "Image Group",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Preview image attachments from the work item form",
@@ -47,6 +47,10 @@
         {
             "path": "imageGroup.html",
             "addressable": true
+        },
+        {
+            "path": "imageGallery.html",
+            "addressable": true
         }
     ],
     "categories": [
@@ -63,6 +67,16 @@
             "properties": {
                 "name": "Images",
                 "uri": "imageGroup.html"
+            }
+        },
+        {
+            "id": "imageGallery",
+            "type": "ms.vss-web.control",
+            "description": "Image gallery",
+            "targets": [ ],
+            "properties": {
+                "uri": "imageGallery.html",
+                "registeredObjectId": "dialogCallbacks"
             }
         }
     ]

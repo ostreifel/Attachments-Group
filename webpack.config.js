@@ -4,6 +4,7 @@ const path = require("path");
 module.exports = {
     entry: {
         registerImageGroup: "./scripts/group/registerImageGroup.ts",
+        registerImageGallery: "./scripts/dialog/registerImageGallery.ts",
     },
     output: {
         libraryTarget: "amd",

@@ -1,0 +1,49 @@
+.gallery-body {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    #gallery-wrapper {
+        height: 100%;
+    }
+    .gallery {
+        border: 1px solid black;
+        margin: 5px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        background: black;
+        height: 100%;
+        .gallery-image {
+            background-image: url('../img/checkerboard.png');
+            border: 1px solid gray;
+            &.center {
+                max-height: 100%;
+                max-width: calc(100% - 120);
+            }
+        }
+        .nav-button {
+            width: 50px;
+            max-height: 100%;
+            display: flex;
+            overflow: hidden;
+            cursor: pointer;
+            &:focus {
+                outline: 2px solid white;
+            }
+            &.prev {
+                justify-content: flex-end;
+            }
+            &.next {
+                justify-content: flex-start;
+            }
+            .image-wrapper {
+                max-height: 100%;
+                .gallery-image {
+                    max-height: 100%;
+                }
+            }
+        }
+    }
+}
