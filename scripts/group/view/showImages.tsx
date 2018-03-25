@@ -1,8 +1,11 @@
+import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { DelayedFunction } from "VSS/Utils/Core";
 import { IImageAttachment } from "../../IImageAttachment";
 import { ImageThumbnails } from "./ImageThumbNails";
+
+initializeIcons();
 
 function resize() {
     const altMin = $(".callout").outerHeight();
