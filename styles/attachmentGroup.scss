@@ -49,10 +49,14 @@
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                .thumbnail {
+                .thumbnail.image {
                     max-width: 100%;
                     max-height: 100%;
                     background-image: url('../img/checkerboard.png');
+                }
+                .thumbnail.file {
+                    color: black;
+                    font-size: 95px;
                 }
             }
             .title {

@@ -8,7 +8,6 @@ export class AddAttachment extends React.Component<{}, {}> {
             <form className="file-form">
                 <input
                     className="file-input"
-                    accept="image/*"
                     type="file"
                     onChange={(e) => this.onChange(e)}
                     multiple={true}

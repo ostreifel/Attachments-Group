@@ -53,51 +53,55 @@ export async function addFiles(files: FileList) {
     if (!files || files.length === 0) {
         return;
     }
-    trackEvent("add", {adding: files.length + "", ...getProps()});
-    const readerPromises: IPromise<AttachmentReference>[] = [];
-    for (let i = 0; i < files.length; i++) {
-        const file = files.item(i);
-        readerPromises.push(getClient().createAttachment(file, file.name));
-    }
-    const refs = await Promise.all(readerPromises);
-    const formService = await WorkItemFormService.getService();
-    const id = await formService.getId();
-    const patch: JsonPatchDocument & JsonPatchOperation[] = refs.map((ref): JsonPatchOperation => (
-        {
-            op: Operation.Add,
-            path: "/relations/-",
-            value: {
-                rel: "AttachedFile",
-                url: ref.url,
-                attributes: {
-                    comment: "Created from the attachment group extension",
+    tryExecute(async () => {
+        trackEvent("add", {adding: files.length + "", ...getProps()});
+        const readerPromises: IPromise<AttachmentReference>[] = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files.item(i);
+            readerPromises.push(getClient().createAttachment(file, file.name));
+        }
+        const refs = await Promise.all(readerPromises);
+        const formService = await WorkItemFormService.getService();
+        const id = await formService.getId();
+        const patch: JsonPatchDocument & JsonPatchOperation[] = refs.map((ref): JsonPatchOperation => (
+            {
+                op: Operation.Add,
+                path: "/relations/-",
+                value: {
+                    rel: "AttachedFile",
+                    url: ref.url,
+                    attributes: {
+                    },
                 },
-            },
-        } as JsonPatchOperation
-    ));
+            } as JsonPatchOperation
+        ));
 
-    const wi = await getClient().updateWorkItem(patch, id);
-    await update(wi);
+        const wi = await getClient().updateWorkItem(patch, id);
+        await update(wi);
+    });
 }
 
 export async function deleteAttachment(file: IFileAttachment) {
     const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
     return dialogService.openMessageDialog(`Permanently delete ${file.attributes.name}?`)
-    .then(async () => {
-        const formService = await WorkItemFormService.getService();
-        const id = await formService.getId();
-        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
-        if (idx < 0) {
-            return;
-        }
-        const patch: JsonPatchDocument & JsonPatchOperation[] = [
-            {
-                op: Operation.Remove,
-                path: `/relations/${idx}`,
-            } as JsonPatchOperation,
-        ];
-        const updated = await getClient().updateWorkItem(patch, id);
-        update(updated);
+    .then(() => {
+        tryExecute(async () => {
+            trackEvent("delete", {...getProps()});
+            const formService = await WorkItemFormService.getService();
+            const id = await formService.getId();
+            const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+            const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
+            if (idx < 0) {
+                return;
+            }
+            const patch: JsonPatchDocument & JsonPatchOperation[] = [
+                {
+                    op: Operation.Remove,
+                    path: `/relations/${idx}`,
+                } as JsonPatchOperation,
+            ];
+            const updated = await getClient().updateWorkItem(patch, id);
+            await update(updated);
+        });
     });
 }
