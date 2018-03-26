@@ -58,6 +58,7 @@
             .title {
                 width: 100px;
                 display: flex;
+                justify-content: space-between;
                 .text {
                     white-space: nowrap;
                     overflow: hidden;
