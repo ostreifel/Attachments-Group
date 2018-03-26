@@ -1,16 +1,16 @@
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
-import { IImageAttachment } from "../../IImageAttachment";
+import { IFileAttachment } from "../../IFileAttachment";
 import { showGallery } from "../showGallery";
 
 export interface IGalleryProps {
-    images: IImageAttachment[];
+    images: IFileAttachment[];
     idx: number;
     setTitle: (title: string) => void;
     close: () => void;
 }
 
-function getImageUrl(image?: IImageAttachment) {
+function getImageUrl(image?: IFileAttachment) {
     return image && `${image.url}?filename=${image.attributes.name}`;
 }
 

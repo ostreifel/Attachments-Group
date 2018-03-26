@@ -3,8 +3,8 @@ import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Contracts";
 import { IProperties, trackEvent } from "../events";
-import { IImageAttachment } from "../IImageAttachment";
-import { setError, setStatus, showImages } from "./view/showImages";
+import { IFileAttachment } from "../IFileAttachment";
+import { setError, setStatus, showAttachments } from "./view/showAttachments";
 
 async function tryExecute(callback: () => Promise<void>) {
     try {
@@ -26,21 +26,20 @@ async function tryExecute(callback: () => Promise<void>) {
 
 function getProps(): IProperties {
     return {
-        images: images.length + "",
+        attachments: attachments.length + "",
     };
 }
 
-let images: IImageAttachment[] = [];
+let attachments: IFileAttachment[] = [];
 
-const imageRegex = /\.jpe?g$|\.gif$|\.png$|\.bmp$|\.png$/i;
 async function update(wi: WorkItem) {
-    images = (wi.relations || []).filter((r) =>
-        r.rel === "AttachedFile" && imageRegex.test(r.attributes.name),
-    ) as IImageAttachment[];
-    showImages(images);
+    attachments = (wi.relations || []).filter((r) =>
+        r.rel === "AttachedFile",
+    ) as IFileAttachment[];
+    showAttachments(attachments);
 }
 
-export async function refreshImages(): Promise<void> {
+export async function refreshAttachments(): Promise<void> {
     tryExecute(async () => {
         trackEvent("refresh", {new: "false", ...getProps()});
         const formService = await WorkItemFormService.getService();
@@ -71,7 +70,7 @@ export async function addFiles(files: FileList) {
                 rel: "AttachedFile",
                 url: ref.url,
                 attributes: {
-                    comment: "Created from the image group extension",
+                    comment: "Created from the attachment group extension",
                 },
             },
         } as JsonPatchOperation
@@ -81,14 +80,14 @@ export async function addFiles(files: FileList) {
     await update(wi);
 }
 
-export async function deleteImage(image: IImageAttachment) {
+export async function deleteAttachment(file: IFileAttachment) {
     const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
-    return dialogService.openMessageDialog(`Permanently delete ${image.attributes.name}?`)
+    return dialogService.openMessageDialog(`Permanently delete ${file.attributes.name}?`)
     .then(async () => {
         const formService = await WorkItemFormService.getService();
         const id = await formService.getId();
         const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        const idx = (wi.relations || []).map(({url}) => url).indexOf(image.url);
+        const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
         if (idx < 0) {
             return;
         }

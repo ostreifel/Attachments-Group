@@ -1,7 +1,7 @@
-import { IImageAttachment } from "../IImageAttachment";
+import { IFileAttachment } from "../IFileAttachment";
 
 export interface IContextOptions {
-    images: IImageAttachment[];
+    images: IFileAttachment[];
     idx: number;
     close: () => void;
     setTitle: (title: string) => void;

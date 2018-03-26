@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <script src="dist/VSS.SDK.min.js"></script>
-    <link href="dist/imageGroup.css" rel="stylesheet" />
+    <link href="dist/attachmentGroup.css" rel="stylesheet" />
 </head>
 <body>
     <script type="text/javascript">
@@ -18,21 +18,21 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["dist/registerImageGroup"], function () {
+        VSS.require(["dist/registerAttachmentGroup"], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });
     </script>
     <span class="bowtie-icon bowtie-status-info info" tabindex="0">
             <div class="callout">
-                <div class="message">Thank you for using the Image Group Extension!</div>
+                <div class="message">Thank you for using the Attachments Group Extension!</div>
                 <a href="https://marketplace.visualstudio.com/items?itemName=ottostreifel.image-group#review-details" target="_blank">Write a review</a>
                 | <a href="https://github.com/ostreifel/Image-Group/issues" target="_blank">Report an issue</a>
-                <!-- | <a href="mailto:limagegroup@microsoft.com" target="_blank">Feedback and suggestions</a> -->
+                <!-- | <a href="mailto:attachmentsgroup@microsoft.com" target="_blank">Feedback and suggestions</a> -->
             </div>
     </span>
     <div class="main-content">
-        <div id="image-container"></div>
+        <div id="attachment-container"></div>
         <div class="status-message"></div>
         <div class="error-message"></div>
     </div>

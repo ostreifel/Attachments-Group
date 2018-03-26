@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = {
     entry: {
-        registerImageGroup: "./scripts/group/registerImageGroup.ts",
+        registerAttachmentGroup: "./scripts/group/registerAttachmentGroup.ts",
         registerImageGallery: "./scripts/dialog/registerImageGallery.ts",
     },
     output: {
@@ -29,5 +29,6 @@ module.exports = {
         { test: /\.tsx?$/, loader: "ts-loader" }
       ]
     },
-    devtool: "source-map"
+    devtool: "source-map",
+    mode: "production"
 };

@@ -1,23 +1,23 @@
 import { IWorkItemNotificationListener } from "TFS/WorkItemTracking/ExtensionContracts";
-import { refreshImages } from "./imageManager";
+import { refreshAttachments } from "./attachmentManager";
 
-export class ImageGroupFormEvents implements IWorkItemNotificationListener {
+export class AttachmentGroupFormEvents implements IWorkItemNotificationListener {
     public onLoaded(/*workItemLoadedArgs: IWorkItemLoadedArgs*/): void {
-        refreshImages();
+        refreshAttachments();
     }
     public onFieldChanged(/*fieldChangedArgs: IWorkItemFieldChangedArgs*/): void {
-        // refreshImages();
+        // noop
     }
     public onSaved(/*savedEventArgs: IWorkItemChangedArgs*/): void {
-        return;
+        // noop
     }
     public onRefreshed(/*refreshEventArgs: IWorkItemChangedArgs*/): void {
-        refreshImages();
+        refreshAttachments();
     }
     public onReset(/*undoEventArgs: IWorkItemChangedArgs*/): void {
-        // refreshImages();
+        // noop
     }
     public onUnloaded(/*unloadedEventArgs: IWorkItemChangedArgs*/): void {
-        // throw new Error("Method not implemented.");
+        // noop
     }
 }

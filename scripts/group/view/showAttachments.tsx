@@ -2,8 +2,8 @@ import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { DelayedFunction } from "VSS/Utils/Core";
-import { IImageAttachment } from "../../IImageAttachment";
-import { ImageThumbnails } from "./ImageThumbNails";
+import { IFileAttachment } from "../../IFileAttachment";
+import { FileThumbnails } from "./FileThumbNails";
 
 initializeIcons();
 
@@ -45,9 +45,9 @@ export function setError(message: string) {
     resize();
 }
 
-export function showImages(images: IImageAttachment[]) {
+export function showAttachments(images: IFileAttachment[]) {
     return new Promise<void>((resolve) => {
-        ReactDOM.render(<ImageThumbnails images={images}/>, document.getElementById("image-container"), () => {
+        ReactDOM.render(<FileThumbnails files={images}/>, document.getElementById("attachment-container"), () => {
             afterRender();
             resolve();
         });

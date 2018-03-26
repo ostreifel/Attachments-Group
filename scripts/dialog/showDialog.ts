@@ -1,8 +1,8 @@
 import { trackEvent } from "../events";
-import { IImageAttachment } from "../IImageAttachment";
+import { IFileAttachment } from "../IFileAttachment";
 import { IContextOptions } from "./IContextOptions";
 
-export async function showDialog(images: IImageAttachment[], idx: number) {
+export async function showDialog(images: IFileAttachment[], idx: number) {
     const dialogService = (await VSS.getService(VSS.ServiceIds.Dialog)) as IHostDialogService;
     let closeDialog: () => void;
     let setTitle: (title: string) => undefined;

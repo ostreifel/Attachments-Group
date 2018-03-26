@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
-    "id": "image-group",
-    "version": "0.0.72",
-    "name": "Image Group",
+    "id": "attachments-group",
+    "version": "0.0.77",
+    "name": "Attachments Group",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Preview image attachments from the work item form",
     "publisher": "ottostreifel",
@@ -18,8 +18,9 @@
         "Work Item",
         "Group",
         "Productivity",
-        "Attachment",
+        "File",
         "Image",
+        "Attachment",
         "Form"
     ],
     "content": {
@@ -29,7 +30,7 @@
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/ostreifel/Image-Group"
+        "uri": "https://github.com/ostreifel/Attachments-Group"
     },
     "branding": {
         "color": "rgb(220, 235, 252)",
@@ -45,7 +46,7 @@
             "addressable": true
         },
         {
-            "path": "imageGroup.html",
+            "path": "attachmentGroup.html",
             "addressable": true
         },
         {
@@ -58,15 +59,15 @@
     ],
     "contributions": [
         {
-            "id": "imgae-group",
+            "id": "attachments-group",
             "type": "ms.vss-work-web.work-item-form-group",
-            "description": "Show images associated with the current workitem",
+            "description": "Show attachments associated with the current workitem",
             "targets": [
                 "ms.vss-work-web.work-item-form"
             ],
             "properties": {
-                "name": "Images",
-                "uri": "imageGroup.html"
+                "name": "Attachments",
+                "uri": "attachmentGroup.html"
             }
         },
         {

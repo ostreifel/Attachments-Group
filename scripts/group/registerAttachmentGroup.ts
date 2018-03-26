@@ -1,6 +1,6 @@
 /// <reference types="vss-web-extension-sdk" />
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
-import { ImageGroupFormEvents } from "./ImageGroupFormEvents";
+import { AttachmentGroupFormEvents } from "./AttachmentGroupFormEvents";
 
 // save on ctr + s
 $(window).bind("keydown", (event) => {
@@ -12,4 +12,4 @@ $(window).bind("keydown", (event) => {
     }
 });
 
-VSS.register(VSS.getContribution().id, new ImageGroupFormEvents());
+VSS.register(VSS.getContribution().id, new AttachmentGroupFormEvents());

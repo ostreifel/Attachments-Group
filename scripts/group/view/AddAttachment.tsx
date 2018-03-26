@@ -1,8 +1,8 @@
 import { ActionButton } from "office-ui-fabric-react/lib/Button";
 import * as React from "react";
-import { addFiles } from "../imageManager";
+import { addFiles } from "../attachmentManager";
 
-export class AddImage extends React.Component<{}, {}> {
+export class AddAttachment extends React.Component<{}, {}> {
     public render() {
         return <div className="add-image">
             <form className="file-form">
@@ -22,7 +22,7 @@ export class AddImage extends React.Component<{}, {}> {
                     iconName: "Add",
                 } }
             >
-                Add Image(s)
+                Add Files(s)
             </ActionButton>
         </div>;
     }

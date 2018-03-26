@@ -2,40 +2,46 @@ import { IconButton } from "office-ui-fabric-react/lib/Button";
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
 import { showDialog } from "../../dialog/showDialog";
-import { IImageAttachment } from "../../IImageAttachment";
-import { deleteImage } from "../imageManager";
+import { IFileAttachment } from "../../IFileAttachment";
+import { deleteAttachment } from "../attachmentManager";
 
-export interface ImageThumbNailProps {
+export interface IFileThumbNailProps {
     idx: number;
-    images: IImageAttachment[];
+    files: IFileAttachment[];
 }
 
-export class ImageThumbNail extends React.Component<ImageThumbNailProps, {}> {
+const imageRegex = /\.jpe?g$|\.gif$|\.png$|\.bmp$|\.png$/i;
+export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     public render() {
-        const { images, idx } = this.props;
-        const image = images[idx];
-        const imageUrl = `${image.url}?filename=${image.attributes.name}`;
+        const { files, idx } = this.props;
+        const file = files[idx];
+        const imageUrl = `${file.url}?filename=${file.attributes.name}`;
+        const isImage: boolean = imageRegex.test(file.attributes.name);
         return <a
             className="thumbnail-tile"
             href={imageUrl}
             onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                showDialog(images, idx);
+                if (isImage) {
+                    showDialog(files, idx);
+                }
             }}
             onKeyDown={(e) => {
                 if (e.keyCode === KeyCode.ENTER) {
                     e.preventDefault();
                     e.stopPropagation();
-                    showDialog(images, idx);
+                    if (isImage) {
+                        showDialog(files, idx);
+                    }
                 }
             }}
         >
             <div className="thumb-box">
-                <img className="image-thumbnail" src={imageUrl} />
+                <img className="thumbnail" src={imageUrl} />
             </div>
             <div className="title">
-                <div className="text">{image.attributes.name}</div>
+                <div className="text">{file.attributes.name}</div>
                 <IconButton
                     className="delete-button"
                     iconProps={{iconName: "Delete"}}
@@ -43,7 +49,7 @@ export class ImageThumbNail extends React.Component<ImageThumbNailProps, {}> {
                     onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        deleteImage(image);
+                        deleteAttachment(file);
                     }}
                 />
             </div>

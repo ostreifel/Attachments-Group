@@ -1,6 +1,6 @@
 import { WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 
-export interface IImageAttachment extends WorkItemRelation {
+export interface IFileAttachment extends WorkItemRelation {
     rel: "AttachedFile";
     url: string;
     attributes: {
