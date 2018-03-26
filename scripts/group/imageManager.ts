@@ -80,3 +80,25 @@ export async function addFiles(files: FileList) {
     const wi = await getClient().updateWorkItem(patch, id);
     await update(wi);
 }
+
+export async function deleteImage(image: IImageAttachment) {
+    const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
+    return dialogService.openMessageDialog(`Permanently delete ${image.attributes.name}?`)
+    .then(async () => {
+        const formService = await WorkItemFormService.getService();
+        const id = await formService.getId();
+        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+        const idx = (wi.relations || []).map(({url}) => url).indexOf(image.url);
+        if (idx < 0) {
+            return;
+        }
+        const patch: JsonPatchDocument & JsonPatchOperation[] = [
+            {
+                op: Operation.Remove,
+                path: `/relations/${idx}`,
+            } as JsonPatchOperation,
+        ];
+        const updated = await getClient().updateWorkItem(patch, id);
+        update(updated);
+    });
+}

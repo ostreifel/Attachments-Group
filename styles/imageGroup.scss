@@ -31,11 +31,17 @@
             margin: 5px;
             padding: 5px;
             border: 1px solid transparent;
+            text-decoration: none;
             &:focus {
                 background-color: aliceblue;
             }
             &:hover {
                 border: 1px solid black;
+            }
+            &:not(:hover) {
+                .title .delete-button {
+                    display: none;
+                }
             }
             .thumb-box {
                 width: 100px;
@@ -51,9 +57,18 @@
             }
             .title {
                 width: 100px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                display: flex;
+                .text {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .delete-button {
+                    height: 16px;
+                    &:hover {
+                        color: red;
+                    }
+                }
             }
         }
         .add-image {
