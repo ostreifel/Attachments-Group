@@ -27,6 +27,9 @@
         display: flex;
         flex-wrap: wrap;
         padding: 5px;
+        &.dropping-files {
+            background-color: aliceblue;
+        }
         .thumbnail-tile {
             margin: 5px;
             padding: 5px;

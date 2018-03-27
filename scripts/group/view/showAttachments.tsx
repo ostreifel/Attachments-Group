@@ -17,8 +17,6 @@ function resize() {
 }
 
 function afterRender() {
-    $("#links-container .link .checkbox").attr("data-is-focusable", "false").attr("tab-index", -1);
-
     setStatus("");
     resize();
 }
@@ -32,7 +30,7 @@ const delayedSetStatus: DelayedFunction = new DelayedFunction(null, 500, "", () 
 export function setStatus(message: string) {
     $(".error-message").text("");
     delayedStatus = message;
-    if (delayedStatus) {
+    if (delayedStatus || !$(".status-message").text()) {
         delayedSetStatus.reset();
     } else {
         delayedSetStatus.invokeNow();

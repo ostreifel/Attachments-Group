@@ -29,7 +29,7 @@ export class AddAttachment extends React.Component<{}, {}> {
         e: React.ChangeEvent<HTMLInputElement>,
     ) {
         const { files } = e.currentTarget;
-        await addFiles(files);
+        await addFiles(e.type, files);
         ($(".file-form")[0] as HTMLFormElement).reset();
     }
 }

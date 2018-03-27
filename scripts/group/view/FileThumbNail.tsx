@@ -23,7 +23,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
             e.preventDefault();
             e.stopPropagation();
             if (isImage) {
-                showDialog(files, idx);
+                showDialog(e.type, files, idx);
             } else {
                 const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
                 navigationService.openNewWindow(fileUrl, "");
@@ -32,7 +32,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         async function del(e: React.SyntheticEvent<{}>) {
             e.stopPropagation();
             e.preventDefault();
-            deleteAttachment(file);
+            deleteAttachment(e.type, file);
         }
         return <a
             className="thumbnail-tile"

@@ -1,9 +1,10 @@
 import { trackEvent } from "../events";
+import { getProps } from "../group/attachmentManager";
 import { IFileAttachment } from "../IFileAttachment";
 import { isImageFile } from "../isImageFile";
 import { IContextOptions } from "./IContextOptions";
 
-export async function showDialog(files: IFileAttachment[], idx: number) {
+export async function showDialog(trigger: string, files: IFileAttachment[], idx: number) {
     const images: IFileAttachment[] = [];
     let offset = 0;
     for (let i = 0; i < files.length; i++) {
@@ -15,6 +16,7 @@ export async function showDialog(files: IFileAttachment[], idx: number) {
         }
     }
     idx -= offset;
+    trackEvent("openDialog", {trigger, ...getProps()});
     const dialogService = (await VSS.getService(VSS.ServiceIds.Dialog)) as IHostDialogService;
     let closeDialog: () => void;
     let setTitle: (title: string) => undefined;
@@ -24,8 +26,8 @@ export async function showDialog(files: IFileAttachment[], idx: number) {
         setTitle: (title: string) => {
             setTitle(title);
         },
-        close: () => {
-            trackEvent("keyboardExit");
+        close: (closeTrigger: string) => {
+            trackEvent("closeDialog", {trigger: closeTrigger, ...getProps()});
             closeDialog();
         },
     };

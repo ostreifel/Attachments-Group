@@ -1,5 +1,6 @@
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
+import { trackEvent } from "../../events";
 import { IFileAttachment } from "../../IFileAttachment";
 import { showGallery } from "../showGallery";
 
@@ -7,7 +8,7 @@ export interface IGalleryProps {
     images: IFileAttachment[];
     idx: number;
     setTitle: (title: string) => void;
-    close: () => void;
+    close: (trigger: string) => void;
 }
 
 function getImageUrl(image?: IFileAttachment) {
@@ -34,7 +35,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                     this.navigate(e, -1);
                 }
             }}
-            onClick={() => this.props.close()}
+            onClick={(e) => this.props.close(e.type)}
         >
         {prevImageUrl ?
             <div className="prev nav-button"
@@ -88,6 +89,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
             return;
         }
         const {images, setTitle, close} = this.props;
+        trackEvent("galleryNavigate", {images: images.length + "", trigger: e.type});
         showGallery({images, setTitle, idx, close});
     }
 }

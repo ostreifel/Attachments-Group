@@ -11,7 +11,7 @@ const {
 
 $(window).bind("keydown", (event) => {
     if (event.keyCode === KeyCode.ESCAPE) {
-        close();
+        close(event.type);
     }
 });
 
