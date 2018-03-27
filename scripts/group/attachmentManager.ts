@@ -21,7 +21,7 @@ async function tryExecute(callback: () => Promise<void>) {
 
         // tslint:disable-next-line:no-console
         console.error(error);
-        trackEvent("error", {message, ...getProps()});
+        trackEvent("error", {message, stack: error && error.stack, ...getProps()});
         setError(message);
     }
 }
