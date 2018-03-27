@@ -67,12 +67,12 @@ async function update(wi: WorkItem) {
 
 export async function refreshAttachments(): Promise<void> {
     tryExecute(async () => {
-        trackEvent("refresh", {new: "false", ...getProps()});
         const formService = await WorkItemFormService.getService();
         const id = await formService.getId();
         setStatus("Refreshing attachments...");
         const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        update(wi);
+        await update(wi);
+        trackEvent("refresh", {new: "false", ...getProps()});
     });
 }
 
