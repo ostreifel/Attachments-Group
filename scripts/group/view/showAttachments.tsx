@@ -37,17 +37,26 @@ export function setStatus(message: string) {
     }
     resize();
 }
+export function getStatus() {
+    return delayedStatus;
+}
 
 export function setError(message: string) {
+    setStatus("");
     $(".error-message").text(message);
     resize();
 }
 
-export function showAttachments(images: IFileAttachment[]) {
+export function showAttachments(images: IFileAttachment[], newWi: boolean) {
     return new Promise<void>((resolve) => {
-        ReactDOM.render(<FileThumbnails files={images}/>, document.getElementById("attachment-container"), () => {
-            afterRender();
-            resolve();
-        });
+        ReactDOM.render(newWi ?
+            <div>Save workitem to add attachments</div> :
+            <FileThumbnails files={images}/>,
+            document.getElementById("attachment-container"),
+            () => {
+                afterRender();
+                resolve();
+            },
+        );
     });
 }

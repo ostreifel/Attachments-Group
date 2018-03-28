@@ -6,7 +6,7 @@ import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Con
 import { IProperties, trackEvent } from "../events";
 import { IFileAttachment } from "../IFileAttachment";
 import { isImageFile } from "../isImageFile";
-import { setError, setStatus, showAttachments } from "./view/showAttachments";
+import { getStatus, setError, setStatus, showAttachments } from "./view/showAttachments";
 
 async function tryExecute(callback: () => Promise<void>) {
     try {
@@ -21,7 +21,7 @@ async function tryExecute(callback: () => Promise<void>) {
 
         // tslint:disable-next-line:no-console
         console.error(error);
-        trackEvent("error", {message, stack: error && error.stack, ...getProps()});
+        trackEvent("error", {message, stack: error && error.stack, status: getStatus(), ...getProps()});
         setError(message);
     }
 }
@@ -35,44 +35,54 @@ export function getProps(): IProperties {
 
 let attachments: IFileAttachment[] = [];
 
-async function update(wi: WorkItem) {
-    attachments = (wi.relations || []).filter((r) =>
-        r.rel === "AttachedFile",
-    ) as IFileAttachment[];
-    attachments.sort((a, b) => {
-        const comp = (v1, v2) => {
-            if (v1 < v2) {
-                return -1;
-            } else if (v1 > v2) {
-                return 1;
-            }
-            return 0;
-        };
-        return comp(
-            Utils_Date.parseDateString(a.attributes.resourceCreatedDate),
-            Utils_Date.parseDateString(b.attributes.resourceCreatedDate),
-        ) || comp(
-            Utils_Date.parseDateString(a.attributes.authorizedDate),
-            Utils_Date.parseDateString(b.attributes.authorizedDate),
-        ) || comp(
-            a.attributes.name,
-            b.attributes.name,
-        ) || comp(
-            a.attributes.id,
-            b.attributes.id,
-        );
-    });
-    showAttachments(attachments);
+async function update(wi?: WorkItem) {
+    setStatus("Drawing attachment previews...");
+    if (wi) {
+        attachments = (wi.relations || []).filter((r) =>
+            r.rel === "AttachedFile",
+        ) as IFileAttachment[];
+        attachments.sort((a, b) => {
+            const comp = (v1, v2) => {
+                if (v1 < v2) {
+                    return -1;
+                } else if (v1 > v2) {
+                    return 1;
+                }
+                return 0;
+            };
+            return comp(
+                Utils_Date.parseDateString(a.attributes.resourceCreatedDate),
+                Utils_Date.parseDateString(b.attributes.resourceCreatedDate),
+            ) || comp(
+                Utils_Date.parseDateString(a.attributes.authorizedDate),
+                Utils_Date.parseDateString(b.attributes.authorizedDate),
+            ) || comp(
+                a.attributes.name,
+                b.attributes.name,
+            ) || comp(
+                a.attributes.id,
+                b.attributes.id,
+            );
+        });
+    } else {
+        attachments = [];
+    }
+    await showAttachments(attachments, !wi);
 }
 
 export async function refreshAttachments(): Promise<void> {
     tryExecute(async () => {
         const formService = await WorkItemFormService.getService();
         const id = await formService.getId();
-        setStatus("Refreshing attachments...");
-        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        await update(wi);
-        trackEvent("refresh", {new: "false", ...getProps()});
+        if (id === 0) {
+            setStatus("Rendering for new work item...");
+            update(null);
+        } else {
+            setStatus("Refreshing attachments...");
+            const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+            await update(wi);
+        }
+        trackEvent("refresh", {new: (id === 0) + "", ...getProps()});
     });
 }
 
@@ -83,11 +93,11 @@ export async function addFiles(trigger: string, files: FileList) {
     tryExecute(async () => {
         trackEvent("add", {trigger, adding: files.length + "", ...getProps()});
         const readerPromises: IPromise<AttachmentReference>[] = [];
+        setStatus("Creating attachments...");
         for (let i = 0; i < files.length; i++) {
             const file = files.item(i);
             readerPromises.push(getClient().createAttachment(file, file.name));
         }
-        setStatus("Creating attachments...");
         const refs = await Promise.all(readerPromises);
         const formService = await WorkItemFormService.getService();
         const id = await formService.getId();
@@ -117,6 +127,7 @@ export async function deleteAttachment(trigger: string, file: IFileAttachment) {
             trackEvent("delete", {trigger, ...getProps()});
             const formService = await WorkItemFormService.getService();
             const id = await formService.getId();
+            setStatus("Getting work item to remove attachment from...");
             const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
             const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
             if (idx < 0) {

@@ -9,7 +9,7 @@ export class AttachmentGroupFormEvents implements IWorkItemNotificationListener 
         // noop
     }
     public onSaved(/*savedEventArgs: IWorkItemChangedArgs*/): void {
-        // noop
+        refreshAttachments();
     }
     public onRefreshed(/*refreshEventArgs: IWorkItemChangedArgs*/): void {
         refreshAttachments();
