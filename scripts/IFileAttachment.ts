@@ -3,6 +3,7 @@ import { WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 export interface IFileAttachment extends WorkItemRelation {
     rel: "AttachedFile";
     url: string;
+    fromParent?: boolean;
     attributes: {
         authorizedDate: string;
         id: number;

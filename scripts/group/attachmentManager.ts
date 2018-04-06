@@ -29,18 +29,32 @@ async function tryExecute(callback: () => Promise<void>) {
 export function getProps(): IProperties {
     return {
         attachments: attachments.length + "",
+        parentAttachments: attachments.filter((a) => a.fromParent).length + "",
         images: attachments.filter(isImageFile).length + "",
     };
 }
 
+function wiIdFromUrl(url: string): number {
+    const match = url.match(/workitems\/(\d+)$/i);
+    return match ? Number(match[1]) : -1;
+}
+
 let attachments: IFileAttachment[] = [];
+let currentWi: WorkItem | null = null;
+let parent: WorkItem | null = null;
 
 async function update(wi?: WorkItem) {
     setStatus("Drawing attachment previews...");
     if (wi) {
-        attachments = (wi.relations || []).filter((r) =>
-            r.rel === "AttachedFile",
-        ) as IFileAttachment[];
+        currentWi = wi;
+        attachments = [
+            ...((parent && parent.relations || []).filter((r) =>
+                r.rel === "AttachedFile",
+            ) as IFileAttachment[]).map((a) => ({...a, fromParent: true})),
+            ...(wi.relations || []).filter((r) =>
+                r.rel === "AttachedFile",
+            ) as IFileAttachment[],
+        ];
         attachments.sort((a, b) => {
             const comp = (v1, v2) => {
                 if (v1 < v2) {
@@ -51,6 +65,9 @@ async function update(wi?: WorkItem) {
                 return 0;
             };
             return comp(
+                a.fromParent ? 0 : 1,
+                b.fromParent ? 0 : 1,
+            ) || comp(
                 Utils_Date.parseDateString(a.attributes.resourceCreatedDate),
                 Utils_Date.parseDateString(b.attributes.resourceCreatedDate),
             ) || comp(
@@ -76,10 +93,18 @@ export async function refreshAttachments(): Promise<void> {
         const id = await formService.getId();
         if (id === 0) {
             setStatus("Rendering for new work item...");
-            update(null);
+            update();
         } else {
             setStatus("Refreshing attachments...");
             const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+            const [parentRel] = (wi.relations || []).filter(({rel}) => rel === "System.LinkTypes.Hierarchy-Reverse");
+            setStatus("Refreshing parent...");
+            parent = parentRel && await getClient().getWorkItem(
+                wiIdFromUrl(parentRel.url),
+                undefined,
+                undefined,
+                WorkItemExpand.Relations,
+            );
             await update(wi);
         }
         trackEvent("refresh", {new: (id === 0) + "", ...getProps()});
@@ -121,12 +146,14 @@ export async function addFiles(trigger: string, files: FileList) {
 
 export async function deleteAttachment(trigger: string, file: IFileAttachment) {
     const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
-    return dialogService.openMessageDialog(`Permanently delete ${file.attributes.name}?`)
+    return dialogService.openMessageDialog(`Permanently delete ${file.attributes.name} ${
+        file.fromParent ? ` from "${parent.fields["System.Title"]}"` : ""
+    }?`)
     .then(() => {
         tryExecute(async () => {
-            trackEvent("delete", {trigger, ...getProps()});
+            trackEvent("delete", {trigger, fromParent: !!file.fromParent + "", ...getProps()});
             const formService = await WorkItemFormService.getService();
-            const id = await formService.getId();
+            const id = file.fromParent ? parent.id : await formService.getId();
             setStatus("Getting work item to remove attachment from...");
             const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
             const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
@@ -141,7 +168,11 @@ export async function deleteAttachment(trigger: string, file: IFileAttachment) {
             ];
             setStatus("Removing attachment...");
             const updated = await getClient().updateWorkItem(patch, id);
-            await update(updated);
+            if (file.fromParent) {
+                parent = updated;
+            }
+            currentWi = file.fromParent ? currentWi : updated;
+            await update(currentWi);
         });
     });
 }

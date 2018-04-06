@@ -10,6 +10,10 @@
 Common file types will show approriate icons to make them easier to find.
 ![all office file types, many source code file types](img/availableIcons.png)
 
+## Parent Attachments
+Parent attachements will be shown with an up arrow overlay.
+![2 parent attachments: 1 image, 1 powerpoint](img/parentAttachments.png)
+
 # Configuration with Visual Studio Team Services 
 
 To configure where the board group is added click on the customize option from the work item form.  
@@ -34,5 +38,6 @@ Within the same Weblayout choose a Section element and add
 ```
 
 # Change Log
+(04/04/18) 1.0.35 Show parent attachments
 (04/04/18) 1.0.27 Add more file icons
 (03/26/18) 1.0.1 Initial Release

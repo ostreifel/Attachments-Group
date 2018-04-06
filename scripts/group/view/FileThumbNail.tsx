@@ -16,11 +16,6 @@ export interface IFileThumbNailProps {
 
 export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     public render() {
-        const { files, idx } = this.props;
-        const file = files[idx];
-        const isImage: boolean = isImageFile(file);
-        const icon = isImage ? null : getFileIcon(file.attributes.name);
-        const fileUrl = `${file.url}?filename=${file.attributes.name}`;
         async function openFile(e: React.SyntheticEvent<HTMLElement>) {
             e.preventDefault();
             e.stopPropagation();
@@ -36,6 +31,18 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
             e.preventDefault();
             deleteAttachment(e.type, file);
         }
+        const { files, idx } = this.props;
+        const file = files[idx];
+        const isImage: boolean = isImageFile(file);
+        const icon = isImage ? null : getFileIcon(file.attributes.name);
+        const fileUrl = `${file.url}?filename=${file.attributes.name}`;
+        const title = `${
+            file.fromParent ? "From parent" : ""
+        }${
+            file.fromParent && file.attributes.comment ? ": " : ""
+        }${
+            file.attributes.comment || ""
+        }`;
         return <a
             className="thumbnail-tile"
             href={fileUrl}
@@ -48,18 +55,27 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 }
             }}
         >
-            <div className="thumb-box">
+            <div
+                className="thumb-box"
+                title={title}
+            >
                 {
                     isImage ?
-                    <img className="thumbnail image preview" src={fileUrl} title={file.attributes.comment} /> :
+                    <img className="thumbnail image preview" src={fileUrl}/> :
                     icon.type === "url" ?
-                    <img className="thumbnail image" src={icon.url} title={file.attributes.comment} /> :
+                    <img className="thumbnail image" src={icon.url}/> :
                     <Icon
                         className="thumbnail file"
                         iconName={icon.name}
-                        title={file.attributes.comment}
                     />
-                    }
+                }
+                {
+                    file.fromParent ?
+                    <Icon
+                        className="overlay"
+                        iconName={"Up"}
+                    /> : null
+                }
             </div>
             <div className="title">
                 <div className="text">{file.attributes.name}</div>
