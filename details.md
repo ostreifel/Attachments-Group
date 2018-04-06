@@ -6,6 +6,10 @@
 ![click paper logo](img/clickThumbnail.png)  
 ![dialog with larger image of paper clip logo](img/largerPreview.png)
 
+## File Icons
+Common file types will show approriate icons to make them easier to find.
+![all office file types, many source code file types](img/availableIcons.png)
+
 # Configuration with Visual Studio Team Services 
 
 To configure where the board group is added click on the customize option from the work item form.  
@@ -30,4 +34,5 @@ Within the same Weblayout choose a Section element and add
 ```
 
 # Change Log
-(3/26/18) 1.0.1 Initial Release
+(04/04/18) 1.0.27 Add more file icons
+(03/26/18) 1.0.1 Initial Release

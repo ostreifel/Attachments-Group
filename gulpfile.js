@@ -20,7 +20,8 @@ gulp.task('clean', () => {
 gulp.task('tslint', () => {
     return gulp.src(["scripts/**/*ts", "scripts/**/*tsx"])
         .pipe(tslint({
-            formatter: "verbose"
+            formatter: "verbose",
+            fix: true,
         }))
         .pipe(tslint.report());
 });
