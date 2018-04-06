@@ -6,16 +6,20 @@ export type FileIcon = {
     url: string;
 };
 export function getFileIcon(fileName: string): FileIcon {
+    /** From https://developer.microsoft.com/en-us/fabric#/styles/icons */
     const icon = (name: string): FileIcon => ({ type: "name", name });
     const image = (url: string): FileIcon => ({ type: "url", url });
+    /** From https://developer.microsoft.com/en-us/fabric#/styles/brand-icons */
     const officeDocImage = (name: string): FileIcon => image(
         `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/document/svg/${name}_48x1.svg`,
     );
+    /** From https://developer.microsoft.com/en-us/fabric#/styles/brand-icons */
     const officeProdImage = (name: string): FileIcon => image(
         `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/svg/${name}_48x1.svg`,
     );
     const match = /^.*\.(.+?)$/.exec(fileName);
     const ext = match && match[1].toLowerCase();
+
     switch (ext) {
         // these have specific file icons
         case "accdb":
@@ -119,6 +123,8 @@ export function getFileIcon(fileName: string): FileIcon {
             return icon("TextDocument");
         case "rtf":
             return officeDocImage("docx");
+        case "pdf":
+            return icon("PDF");
         default:
             return icon("Page");
     }
