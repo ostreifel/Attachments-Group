@@ -86,9 +86,19 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
     }
 
     public componentDidUpdate() {
+        this.afterRender();
+    }
+
+    public componentDidMount() {
+        this.afterRender();
+    }
+
+    private afterRender() {
         const {previewFiles, idx} = this.props;
         const file = previewFiles[idx];
-        updateIframe(file, this.getFileId());
+        if (!isImageFile(file)) {
+            updateIframe(file, this.getFileId());
+        }
     }
 
     private getFileId() {

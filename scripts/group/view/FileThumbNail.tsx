@@ -6,7 +6,7 @@ import { KeyCode } from "VSS/Utils/UI";
 
 import { showDialog } from "../../dialog/showDialog";
 import { trackEvent } from "../../events";
-import { getFileUrl, isImageFile } from "../../fileType";
+import { getFileUrl, isImageFile, isPreviewable } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
 import { deleteAttachment, getProps } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
@@ -21,7 +21,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         async function openFile(e: React.SyntheticEvent<HTMLElement>) {
             e.preventDefault();
             e.stopPropagation();
-            if (isImage) {
+            if (isPreviewable(file)) {
                 showDialog(e.type, files, idx);
             } else {
                 const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;

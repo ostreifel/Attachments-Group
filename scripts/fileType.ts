@@ -24,8 +24,8 @@ export function isPreviewable(file: IFileAttachment) {
   const ext = getFileExtension(file.attributes.name);
   switch (ext) {
     // TODO can more files be previewed?
-    // case "pdf":
-    //   return true;
+    case "pdf":
+      return true;
     default:
       return false;
   }

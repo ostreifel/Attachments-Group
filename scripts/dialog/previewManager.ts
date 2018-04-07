@@ -1,17 +1,31 @@
-import { getFileUrl } from "../fileType";
+import { getClient } from "TFS/WorkItemTracking/RestClient";
+
+import { getFileExtension } from "../fileType";
+import { getMimeTypes } from "../getMimeType";
 import { IFileAttachment } from "../IFileAttachment";
 
-async function getFile(url: string): Promise<Blob> {
-    throw new Error(url);
+function getFileId(file: IFileAttachment): string {
+    return (file.url.match(/attachments\/(.*)/) as RegExpMatchArray)[1];
 }
 
+async function getFile(file: IFileAttachment): Promise<Blob> {
+    const fileId = getFileId(file);
+    const [type] = getMimeTypes(getFileExtension(file.attributes.name) as string);
+    const buffer = await getClient().getAttachmentContent(fileId, file.attributes.name);
+    const dataview = new DataView(buffer);
+    return new Blob([dataview], {type});
+}
+
+const urls: {[id: string]: Promise<Blob>} = {};
 export async function updateIframe(file: IFileAttachment, id: string) {
-    const fileBlob = await getFile(getFileUrl(file));
-    const fileUrl = window.URL.createObjectURL(fileBlob);
-    // tslint:disable-next-line:no-console
-    console.log(fileUrl);
-    const ele = document.getElementById(id);
-    if (!ele)  {
-        return null;
+    if (!urls.hasOwnProperty(file.url)) {
+        urls[file.url] = getFile(file);
+    }
+    const blob = await urls[file.url];
+    const fileUrl = window.URL.createObjectURL(blob);
+    const ele = document.getElementById(id) as HTMLIFrameElement;
+    console.log("showing url", fileUrl, blob);
+    if (ele) {
+        ele.src = fileUrl;
     }
 }
