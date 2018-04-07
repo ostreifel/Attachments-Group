@@ -1,10 +1,14 @@
 ## Preview
 ![paperclip logo preview above discussion group](img/preview.png)
+
 ## Drag and Drop
 ![dragging paperclip logo onto attachments group](img/dragAndDrop.png)
 ## Click to show fullsize
 ![click paper logo](img/clickThumbnail.png)  
 ![dialog with larger image of paper clip logo](img/largerPreview.png)
+### Preview Pdfs
+Supported in mozilla & chrome  
+![sample pdf preview](img/previewPdf.png)
 
 ## File Icons
 Common file types will show approriate icons to make them easier to find.
@@ -38,6 +42,7 @@ Within the same Weblayout choose a Section element and add
 ```
 
 # Change Log
-(04/04/18) 1.0.35 Show parent attachments
-(04/04/18) 1.0.27 Add more file icons
-(03/26/18) 1.0.1 Initial Release
+(04/06/18) 1.0.56 Pdf previews  
+(04/04/18) 1.0.35 Show parent attachments  
+(04/04/18) 1.0.27 Add more file icons  
+(03/26/18) 1.0.1 Initial Release  

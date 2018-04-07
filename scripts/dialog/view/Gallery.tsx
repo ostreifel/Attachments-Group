@@ -2,8 +2,7 @@ import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
 
 import { trackEvent } from "../../events";
-import { getFileExtension, getFileUrl, isImageFile } from "../../fileType";
-import { getMimeTypes } from "../../getMimeType";
+import { getFileUrl, isImageFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
 import { updateIframe } from "../previewManager";
 import { showGallery } from "../showGallery";
@@ -64,14 +63,13 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                 title={file.attributes.comment}
                 onClick={(e) => e.stopPropagation()}
                 /> :
-                <object
+                <iframe
                 className="gallery-preview center"
                 role="button"
                 tabIndex={0}
                 title={file.attributes.comment}
                 id={this.getFileId()}
-                type={getMimeTypes(getFileExtension(file.attributes.name) as string)[0]}
-            >Your browser does not support previews for this file type</object>
+            >Your browser does not support previews for this file type</iframe>
         }
         {nextImageUrl ?
             <div className="next nav-button"

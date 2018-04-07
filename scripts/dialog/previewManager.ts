@@ -1,5 +1,6 @@
 import { getClient } from "TFS/WorkItemTracking/RestClient";
 
+import { trackEvent } from "../events";
 import { getFileExtension } from "../fileType";
 import { getMimeTypes } from "../getMimeType";
 import { IFileAttachment } from "../IFileAttachment";
@@ -11,6 +12,7 @@ function getFileId(file: IFileAttachment): string {
 async function getFile(file: IFileAttachment): Promise<Blob> {
     const fileId = getFileId(file);
     const [type] = getMimeTypes(getFileExtension(file.attributes.name) as string);
+    trackEvent("filePreview", {type});
     const buffer = await getClient().getAttachmentContent(fileId, file.attributes.name);
     const dataview = new DataView(buffer);
     return new Blob([dataview], {type});
