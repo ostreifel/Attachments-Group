@@ -37,21 +37,17 @@
             display: flex;
             overflow: hidden;
             cursor: pointer;
-            border: 1px solid gray;
-            &.prev {
-                justify-content: flex-end;
-            }
-            &.next {
-                justify-content: flex-start;
-            }
+            height: 100%;
+            align-items: center;
             &:focus {
                 outline: 2px solid white;
             }
-            .image-wrapper {
-                max-height: 100%;
-                .gallery-image {
-                    max-height: 100%;
-                }
+            .chevron-button {
+                color: white;
+                font-size: 50px;
+            }
+            &:hover .chevron-button {
+                color: lightgray;
             }
         }
     }

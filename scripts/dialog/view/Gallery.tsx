@@ -1,3 +1,5 @@
+import { Icon } from "office-ui-fabric-react/lib/Icon";
+import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
 
@@ -6,6 +8,8 @@ import { getFileUrl, isImageFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
 import { updateIframe } from "../previewManager";
 import { showGallery } from "../showGallery";
+
+initializeIcons();
 
 export interface IGalleryProps {
     previewFiles: IFileAttachment[];
@@ -20,8 +24,6 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
         const file = previewFiles[idx];
         setTitle(file.attributes.name);
         const imageUrl = getFileUrl(file);
-        const prevImageUrl = getFileUrl(previewFiles[idx - 1]);
-        const nextImageUrl = getFileUrl(previewFiles[idx + 1]);
         return <div
             className="gallery"
             onKeyDown={(e) => {
@@ -36,23 +38,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
             }}
             onClick={(e) => this.props.close(e.type)}
         >
-        {prevImageUrl ?
-            <div className="prev nav-button"
-                role="button"
-                onClick={(e) => this.navigate(e, -1)}
-                onKeyDown={(e) => {
-                    if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
-                        this.navigate(e, -1);
-                    }
-                }}
-                tabIndex={0}
-                title="Hotkey: ◀"
-            >
-                <div className="image-wrapper">
-                    <img className="gallery-image" src={prevImageUrl} />
-                </div>
-            </div> : <div />
-        }
+        {this.getNextButton("prev")}
         {
             isImageFile(file) ?
             <img
@@ -71,23 +57,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                 id={this.getFileId()}
             >Your browser does not support previews for this file type</iframe>
         }
-        {nextImageUrl ?
-            <div className="next nav-button"
-                role="button"
-                onClick={(e) => this.navigate(e, 1)}
-                onKeyDown={(e) => {
-                    if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
-                        this.navigate(e, 1);
-                    }
-                }}
-                tabIndex={0}
-                title="Hotkey: ▶"
-            >
-                <div className="image-wrapper">
-                    <img className="gallery-image" src={nextImageUrl} />
-                </div>
-            </div> : <div />
-        }
+        {this.getNextButton("next")}
       </div>;
     }
 
@@ -97,6 +67,30 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
 
     public componentDidMount() {
         this.afterRender();
+    }
+
+    private getNextButton(dir: "prev" | "next") {
+        const {previewFiles, idx} = this.props;
+        const offset = dir === "prev" ? -1 : 1;
+        const file: IFileAttachment | undefined = previewFiles[idx + offset];
+        return (file ?
+        <div className={`${dir} nav-button`}
+            role="button"
+            onClick={(e) => this.navigate(e, offset)}
+            onKeyDown={(e) => {
+                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                    this.navigate(e, offset);
+                }
+            }}
+            tabIndex={0}
+            title={`Hotkey: ${dir === "next" ? "▶" : "◀"}`}
+        >
+            <Icon
+                className="chevron-button"
+                iconName={dir === "prev" ? "ChevronLeft" : "ChevronRight"}
+            />
+        </div> : <div />
+        );
     }
 
     private afterRender() {

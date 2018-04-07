@@ -35,6 +35,7 @@
             padding: 5px;
             border: 1px solid transparent;
             text-decoration: none;
+            height: 130px;
             &:focus {
                 background-color: aliceblue;
             }
@@ -99,6 +100,7 @@
                 display: none;
             }
             .add-button {
+                border: 1px solid transparent;
                 &:focus {
                     background-color: aliceblue;
                 }
