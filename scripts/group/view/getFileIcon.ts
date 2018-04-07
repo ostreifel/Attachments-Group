@@ -1,3 +1,5 @@
+import { getFileExtension } from "../../fileType";
+
 export type FileIcon = {
     type: "name"
     name: string;
@@ -17,8 +19,7 @@ export function getFileIcon(fileName: string): FileIcon {
     const officeProdImage = (name: string): FileIcon => image(
         `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/svg/${name}_48x1.svg`,
     );
-    const match = /^.*\.(.+?)$/.exec(fileName);
-    const ext = match && match[1].toLowerCase();
+    const ext = getFileExtension(fileName);
 
     switch (ext) {
         // these have specific file icons

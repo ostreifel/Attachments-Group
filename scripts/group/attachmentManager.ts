@@ -4,8 +4,8 @@ import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import * as Utils_Date from "VSS/Utils/Date";
 import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Contracts";
 import { IProperties, trackEvent } from "../events";
+import { isImageFile } from "../fileType";
 import { IFileAttachment } from "../IFileAttachment";
-import { isImageFile } from "../isImageFile";
 import { getStatus, setError, setStatus, showAttachments } from "./view/showAttachments";
 
 async function tryExecute(callback: () => Promise<void>) {

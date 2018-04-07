@@ -1,28 +1,26 @@
 import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
+
 import { trackEvent } from "../../events";
+import { getFileUrl, isImageFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
 import { showGallery } from "../showGallery";
 
 export interface IGalleryProps {
-    images: IFileAttachment[];
+    previewFiles: IFileAttachment[];
     idx: number;
     setTitle: (title: string) => void;
     close: (trigger: string) => void;
 }
 
-function getImageUrl(image?: IFileAttachment) {
-    return image && `${image.url}?filename=${image.attributes.name}`;
-}
-
 export class Gallery extends React.Component<IGalleryProps, {}> {
     public render() {
-        const {images, idx, setTitle} = this.props;
-        const image = images[idx];
-        setTitle(image.attributes.name);
-        const imageUrl = getImageUrl(image);
-        const prevImageUrl = getImageUrl(images[idx - 1]);
-        const nextImageUrl = getImageUrl(images[idx + 1]);
+        const {previewFiles, idx, setTitle} = this.props;
+        const file = previewFiles[idx];
+        setTitle(file.attributes.name);
+        const imageUrl = getFileUrl(file);
+        const prevImageUrl = getFileUrl(previewFiles[idx - 1]);
+        const nextImageUrl = getFileUrl(previewFiles[idx + 1]);
         return <div
             className="gallery"
             onKeyDown={(e) => {
@@ -54,14 +52,18 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                 </div>
             </div> : <div />
         }
-        <img
-            className="gallery-image center"
-            src={imageUrl}
-            role="button"
-            tabIndex={0}
-            title={image.attributes.comment}
-            onClick={(e) => e.stopPropagation()}
-        />
+        {
+            isImageFile(file) ?
+            <img
+                className="gallery-image center"
+                src={imageUrl}
+                role="button"
+                tabIndex={0}
+                title={file.attributes.comment}
+                onClick={(e) => e.stopPropagation()}
+            /> :
+            <iframe className="gallery-preview center" id={this.getFileId()}/>
+        }
         {nextImageUrl ?
             <div className="next nav-button"
                 role="button"
@@ -82,14 +84,25 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
       </div>;
     }
 
+    public componentDidUpdate() {
+        const {previewFiles, idx} = this.props;
+        const file = previewFiles[idx];
+        updateIframe(file);
+    }
+
+    private getFileId() {
+        const {idx} = this.props;
+        return `file${idx}`;
+    }
+
     private navigate(e: React.SyntheticEvent<HTMLDivElement>, dir: -1 | 1) {
         e.stopPropagation();
         const idx = this.props.idx + dir;
-        if (idx < 0 || idx >= this.props.images.length) {
+        if (idx < 0 || idx >= this.props.previewFiles.length) {
             return;
         }
-        const {images, setTitle, close} = this.props;
-        trackEvent("galleryNavigate", {images: images.length + "", trigger: e.type});
-        showGallery({images, setTitle, idx, close});
+        const {previewFiles, setTitle, close} = this.props;
+        trackEvent("galleryNavigate", {images: previewFiles.length + "", trigger: e.type});
+        showGallery({previewFiles, setTitle, idx, close});
     }
 }

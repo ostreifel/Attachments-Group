@@ -3,10 +3,11 @@ import { Icon } from "office-ui-fabric-react/lib/Icon";
 import * as React from "react";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 import { KeyCode } from "VSS/Utils/UI";
+
 import { showDialog } from "../../dialog/showDialog";
 import { trackEvent } from "../../events";
+import { getFileUrl, isImageFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
-import { isImageFile } from "../../isImageFile";
 import { deleteAttachment, getProps } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
 
@@ -37,7 +38,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         const file = files[idx];
         const isImage: boolean = isImageFile(file);
         const icon = isImage ? null : getFileIcon(file.attributes.name);
-        const fileUrl = `${file.url}?filename=${file.attributes.name}`;
+        const fileUrl = getFileUrl(file);
         const title = `${
             file.fromParent ? "From parent" : ""
         }${

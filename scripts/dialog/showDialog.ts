@@ -1,16 +1,16 @@
 import { trackEvent } from "../events";
+import { isImageFile, isPreviewable } from "../fileType";
 import { getProps } from "../group/attachmentManager";
 import { IFileAttachment } from "../IFileAttachment";
-import { isImageFile } from "../isImageFile";
 import { IContextOptions } from "./IContextOptions";
 
 export async function showDialog(trigger: string, files: IFileAttachment[], idx: number) {
-    const images: IFileAttachment[] = [];
+    const previewFiles: IFileAttachment[] = [];
     let offset = 0;
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (isImageFile(file)) {
-            images.push(file);
+        if (isPreviewable(file)) {
+            previewFiles.push(file);
         } else if (i < idx) {
             offset++;
         }
@@ -21,7 +21,7 @@ export async function showDialog(trigger: string, files: IFileAttachment[], idx:
     let closeDialog: () => void;
     let setTitle: (title: string) => undefined;
     const context: IContextOptions = {
-        images,
+        previewFiles,
         idx,
         setTitle: (title: string) => {
             setTitle(title);
@@ -32,7 +32,7 @@ export async function showDialog(trigger: string, files: IFileAttachment[], idx:
         },
     };
     const dialogOptions: IHostDialogOptions = {
-        title: images[idx].attributes.name,
+        title: previewFiles[idx].attributes.name,
         width: Number.MAX_VALUE,
         height: Number.MAX_VALUE,
         resizable: true,

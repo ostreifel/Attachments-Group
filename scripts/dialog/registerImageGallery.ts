@@ -3,7 +3,7 @@ import { IContextOptions } from "./IContextOptions";
 import { showGallery } from "./showGallery";
 
 const {
-    images,
+    previewFiles,
     idx,
     close,
     setTitle,
@@ -15,7 +15,7 @@ $(window).bind("keydown", (event) => {
     }
 });
 
-showGallery({images, idx, setTitle, close}).then(() => {
+showGallery({previewFiles, idx, setTitle, close}).then(() => {
     $(".gallery-image.center").focus();
 });
 

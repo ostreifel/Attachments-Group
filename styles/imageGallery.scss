@@ -15,15 +15,19 @@
         align-items:center;
         background: black;
         height: 100%;
-        .gallery-image {
-            background-image: url('../img/checkerboard.png');
+        .center {
             border: 1px solid gray;
-            &.center {
-                max-height: 100%;
-                max-width: calc(100% - 120px);
-            }
             &:focus {
                 outline: 2px solid white;
+            }
+            &.gallery-image {
+                max-height: 100%;
+                max-width: calc(100% - 120px);
+                background-image: url('../img/checkerboard.png');
+            }
+            &.gallery-preview {
+                height: 100%;
+                width: calc(100% - 120px);
             }
         }
         .nav-button {
