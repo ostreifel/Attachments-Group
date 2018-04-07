@@ -1,4 +1,5 @@
 import { getFileExtension } from "../../fileType";
+import { getMimeTypes } from "../../getMimeType";
 
 export type FileIcon = {
     type: "name"
@@ -7,20 +8,42 @@ export type FileIcon = {
     type: "url";
     url: string;
 };
-export function getFileIcon(fileName: string): FileIcon {
-    /** From https://developer.microsoft.com/en-us/fabric#/styles/icons */
-    const icon = (name: string): FileIcon => ({ type: "name", name });
-    const image = (url: string): FileIcon => ({ type: "url", url });
-    /** From https://developer.microsoft.com/en-us/fabric#/styles/brand-icons */
-    const officeDocImage = (name: string): FileIcon => image(
-        `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/document/svg/${name}_48x1.svg`,
-    );
-    /** From https://developer.microsoft.com/en-us/fabric#/styles/brand-icons */
-    const officeProdImage = (name: string): FileIcon => image(
-        `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/svg/${name}_48x1.svg`,
-    );
-    const ext = getFileExtension(fileName);
+/** From https://developer.microsoft.com/en-us/fabric#/styles/icons */
+const icon = (name: string): FileIcon => ({ type: "name", name });
+const image = (url: string): FileIcon => ({ type: "url", url });
+/** From https://developer.microsoft.com/en-us/fabric#/styles/brand-icons */
+const officeDocImage = (name: string): FileIcon => image(
+    `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/document/svg/${name}_48x1.svg`,
+);
+/** From https://developer.microsoft.com/en-us/fabric#/styles/brand-icons */
+const officeProdImage = (name: string): FileIcon => image(
+    `https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/svg/${name}_48x1.svg`,
+);
 
+function fromMime(ext: string): FileIcon | null {
+    const mimeTypes = getMimeTypes(ext);
+    if (mimeTypes.length === 0) {
+        return null;
+    }
+    const classifications = mimeTypes.map((t) => (/(.+)\//.exec(t) || [])[1]);
+    let classification: string = "";
+    for (const c of classifications) {
+        if (!c || (classification && c !== classification)) {
+            return null;
+        }
+        classification = c;
+    }
+    switch (classification) {
+        case "video":
+            return icon("Video");
+        case "image":
+            return icon("FileImage");
+        default:
+            return null;
+    }
+}
+export function getFileIcon(fileName: string): FileIcon {
+    const ext = getFileExtension(fileName);
     switch (ext) {
         // these have specific file icons
         case "accdb":
@@ -126,7 +149,9 @@ export function getFileIcon(fileName: string): FileIcon {
             return officeDocImage("docx");
         case "pdf":
             return icon("PDF");
+        case "mp4":
+            return icon("Video");
         default:
-            return icon("Page");
+            return (ext && fromMime(ext)) || icon("Page");
     }
 }
