@@ -1,10 +1,17 @@
 import { getFileUrl } from "../fileType";
 import { IFileAttachment } from "../IFileAttachment";
 
-async function getFile(url: string) {
-
+async function getFile(url: string): Promise<Blob> {
+    throw new Error(url);
 }
 
-async function updateIframe(fileRef: IFileAttachment, id: string) {
-    const file = await getFile(getFileUrl(fileRef));
+export async function updateIframe(file: IFileAttachment, id: string) {
+    const fileBlob = await getFile(getFileUrl(file));
+    const fileUrl = window.URL.createObjectURL(fileBlob);
+    // tslint:disable-next-line:no-console
+    console.log(fileUrl);
+    const ele = document.getElementById(id);
+    if (!ele)  {
+        return null;
+    }
 }

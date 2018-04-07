@@ -6,6 +6,8 @@ export function getFileExtension(fileName: string) {
   return ext;
 }
 
+export function getFileUrl(file: undefined): undefined;
+export function getFileUrl(file: IFileAttachment): string;
 export function getFileUrl(file?: IFileAttachment) {
   return file && `${file.url}?filename=${file.attributes.name}`;
 }

@@ -4,6 +4,7 @@ import { KeyCode } from "VSS/Utils/UI";
 import { trackEvent } from "../../events";
 import { getFileUrl, isImageFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
+import { updateIframe } from "../previewManager";
 import { showGallery } from "../showGallery";
 
 export interface IGalleryProps {
@@ -87,7 +88,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
     public componentDidUpdate() {
         const {previewFiles, idx} = this.props;
         const file = previewFiles[idx];
-        updateIframe(file);
+        updateIframe(file, this.getFileId());
     }
 
     private getFileId() {

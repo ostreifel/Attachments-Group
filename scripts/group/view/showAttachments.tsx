@@ -8,8 +8,8 @@ import { FileThumbnails } from "./FileThumbNails";
 initializeIcons();
 
 function resize() {
-    const altMin = $(".callout").outerHeight();
-    if (altMin > $(".main-content").outerHeight()) {
+    const altMin = $(".callout").outerHeight() as number;
+    if (altMin > ($(".main-content").outerHeight() as number)) {
         VSS.resize(undefined, altMin + 16);
     } else {
         VSS.resize();

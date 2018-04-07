@@ -63,7 +63,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 title={title}
             >
                 {
-                    isImage ?
+                    isImage || !icon ?
                     <img className="thumbnail image preview" src={fileUrl}/> :
                     icon.type === "url" ?
                     <img className="thumbnail image" src={icon.url}/> :

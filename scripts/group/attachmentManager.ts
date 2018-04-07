@@ -147,13 +147,13 @@ export async function addFiles(trigger: string, files: FileList) {
 export async function deleteAttachment(trigger: string, file: IFileAttachment) {
     const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
     return dialogService.openMessageDialog(`Permanently delete ${file.attributes.name} ${
-        file.fromParent ? ` from "${parent.fields["System.Title"]}"` : ""
+        file.fromParent && parent ? ` from "${parent.fields["System.Title"]}"` : ""
     }?`)
     .then(() => {
         tryExecute(async () => {
             trackEvent("delete", {trigger, fromParent: !!file.fromParent + "", ...getProps()});
             const formService = await WorkItemFormService.getService();
-            const id = file.fromParent ? parent.id : await formService.getId();
+            const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
             setStatus("Getting work item to remove attachment from...");
             const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
             const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
@@ -171,7 +171,7 @@ export async function deleteAttachment(trigger: string, file: IFileAttachment) {
             if (file.fromParent) {
                 parent = updated;
             }
-            currentWi = file.fromParent ? currentWi : updated;
+            currentWi = file.fromParent ? currentWi as WorkItem : updated;
             await update(currentWi);
         });
     });

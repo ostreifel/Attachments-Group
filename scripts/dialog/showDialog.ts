@@ -1,5 +1,5 @@
 import { trackEvent } from "../events";
-import { isImageFile, isPreviewable } from "../fileType";
+import { isPreviewable } from "../fileType";
 import { getProps } from "../group/attachmentManager";
 import { IFileAttachment } from "../IFileAttachment";
 import { IContextOptions } from "./IContextOptions";
