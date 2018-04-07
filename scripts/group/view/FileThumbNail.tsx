@@ -4,9 +4,10 @@ import * as React from "react";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 import { KeyCode } from "VSS/Utils/UI";
 import { showDialog } from "../../dialog/showDialog";
+import { trackEvent } from "../../events";
 import { IFileAttachment } from "../../IFileAttachment";
 import { isImageFile } from "../../isImageFile";
-import { deleteAttachment } from "../attachmentManager";
+import { deleteAttachment, getProps } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
 
 export interface IFileThumbNailProps {
@@ -23,6 +24,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 showDialog(e.type, files, idx);
             } else {
                 const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
+                trackEvent("download", {trigger: e.type, fromParent: !!files[idx].fromParent + "", ...getProps()});
                 navigationService.openNewWindow(fileUrl, "");
             }
         }

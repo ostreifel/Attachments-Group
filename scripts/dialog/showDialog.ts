@@ -16,7 +16,7 @@ export async function showDialog(trigger: string, files: IFileAttachment[], idx:
         }
     }
     idx -= offset;
-    trackEvent("openDialog", {trigger, ...getProps()});
+    trackEvent("openDialog", {trigger, fromParent: !!files[idx].fromParent + "", ...getProps()});
     const dialogService = (await VSS.getService(VSS.ServiceIds.Dialog)) as IHostDialogService;
     let closeDialog: () => void;
     let setTitle: (title: string) => undefined;
