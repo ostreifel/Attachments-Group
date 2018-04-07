@@ -1,3 +1,4 @@
+import { BrowserCheckUtils } from "VSS/Utils/UI";
 import { IFileAttachment } from "./IFileAttachment";
 
 export function getFileExtension(fileName: string) {
@@ -25,7 +26,7 @@ export function isPreviewable(file: IFileAttachment) {
   switch (ext) {
     // TODO can more files be previewed?
     case "pdf":
-      return true;
+      return !BrowserCheckUtils.isEdge() && !BrowserCheckUtils.isIE();
     default:
       return false;
   }

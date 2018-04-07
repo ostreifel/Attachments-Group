@@ -24,7 +24,6 @@ export async function updateIframe(file: IFileAttachment, id: string) {
     const blob = await urls[file.url];
     const fileUrl = window.URL.createObjectURL(blob);
     const ele = document.getElementById(id) as HTMLIFrameElement;
-    console.log("showing url", fileUrl, blob);
     if (ele) {
         ele.src = fileUrl;
     }
