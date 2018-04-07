@@ -4,7 +4,7 @@ import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
 
 import { trackEvent } from "../../events";
-import { getFileUrl, isImageFile } from "../../fileType";
+import { getFileExtension, getFileUrl, isImageFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
 import { updateIframe } from "../previewManager";
 import { showGallery } from "../showGallery";
@@ -23,7 +23,6 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
         const {previewFiles, idx, setTitle} = this.props;
         const file = previewFiles[idx];
         setTitle(file.attributes.name);
-        const imageUrl = getFileUrl(file);
         return <div
             className="gallery"
             onKeyDown={(e) => {
@@ -39,24 +38,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
             onClick={(e) => this.props.close(e.type)}
         >
         {this.getNextButton("prev")}
-        {
-            isImageFile(file) ?
-            <img
-                className="gallery-image center"
-                src={imageUrl}
-                role="button"
-                tabIndex={0}
-                title={file.attributes.comment}
-                onClick={(e) => e.stopPropagation()}
-                /> :
-                <iframe
-                className="gallery-preview center"
-                role="button"
-                tabIndex={0}
-                title={file.attributes.comment}
-                id={this.getFileId()}
-            >Your browser does not support previews for this file type</iframe>
-        }
+        {this.getPreview(file)}
         {this.getNextButton("next")}
       </div>;
     }
@@ -67,6 +49,42 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
 
     public componentDidMount() {
         this.afterRender();
+    }
+
+    private getPreview(file: IFileAttachment) {
+        const props = {
+            role: "button",
+            tabIndex: 0,
+            title: file.attributes.comment,
+        };
+        if (isImageFile(file)) {
+            return <img
+                src={getFileUrl(file)}
+                className="image center"
+                {...props}
+                onClick={(e) => e.stopPropagation()}
+            />;
+        }
+        const ext = getFileExtension(file.attributes.name);
+        if (ext === "pdf") {
+            return <iframe
+                className="pdf center"
+                {...props}
+                id={this.getFileId()}
+            />;
+        }
+        if (ext === "mp4") {
+            return <video
+                className="video center"
+                {...props}
+                controls
+                >
+                <source src={getFileUrl(file)} type="video/mp4"/>
+                Your browser does not support html5 video
+            </video>;
+        }
+
+        return <div>{`Cannot preview ${ext} files`}</div>;
     }
 
     private getNextButton(dir: "prev" | "next") {

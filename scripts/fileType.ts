@@ -27,6 +27,8 @@ export function isPreviewable(file: IFileAttachment) {
     // TODO can more files be previewed?
     case "pdf":
       return !BrowserCheckUtils.isEdge() && !BrowserCheckUtils.isIE();
+    case "mp4":
+      return !BrowserCheckUtils.isEdge() && !BrowserCheckUtils.isIE();
     default:
       return false;
   }

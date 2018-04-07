@@ -18,15 +18,15 @@
         .center {
             color: white;
             border: 1px solid gray;
+            max-height: 100%;
+            max-width: calc(100% - 120px);
             &:focus {
                 outline: 2px solid white;
             }
-            &.gallery-image {
-                max-height: 100%;
-                max-width: calc(100% - 120px);
+            &.image {
                 background-image: url('../img/checkerboard.png');
             }
-            &.gallery-preview {
+            &.pdf {
                 height: 100%;
                 width: calc(100% - 120px);
             }
