@@ -1,4 +1,5 @@
 import { IconButton } from "office-ui-fabric-react/lib/Button";
+import { IContextualMenuItem } from "office-ui-fabric-react/lib/ContextualMenu";
 import { Icon } from "office-ui-fabric-react/lib/Icon";
 import * as React from "react";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
@@ -18,24 +19,7 @@ export interface IFileThumbNailProps {
 
 export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     public render() {
-        async function openFile(e: React.SyntheticEvent<HTMLElement>) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (isPreviewable(file)) {
-                showDialog(e.type, files, idx);
-            } else {
-                const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
-                trackEvent("download", {trigger: e.type, fromParent: !!files[idx].fromParent + "", ...getProps()});
-                navigationService.openNewWindow(fileUrl, "");
-            }
-        }
-        async function del(e: React.SyntheticEvent<{}>) {
-            e.stopPropagation();
-            e.preventDefault();
-            deleteAttachment(e.type, file);
-        }
-        const { files, idx } = this.props;
-        const file = files[idx];
+        const file = this.file();
         const isImage: boolean = isImageFile(file);
         const icon = isImage ? null : getFileIcon(file.attributes.name);
         const fileUrl = getFileUrl(file);
@@ -49,12 +33,12 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         return <a
             className="thumbnail-tile"
             href={fileUrl}
-            onClick={openFile}
+            onClick={this.openFile.bind(this)}
             onKeyDown={(e) => {
                 if (e.keyCode === KeyCode.ENTER) {
-                    openFile(e);
+                    this.openFile(e);
                 } else if (e.keyCode === KeyCode.DELETE) {
-                    del(e);
+                    this.del(e);
                 }
             }}
         >
@@ -81,14 +65,67 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 }
             </div>
             <div className="title">
-                <div className="text">{file.attributes.name}</div>
-                <IconButton
-                    className="delete-button"
-                    iconProps={{iconName: "Delete"}}
-                    title="Delete (del)"
-                    onClick={del}
-                />
+                <div className="text" title={file.attributes.name}>{file.attributes.name}</div>
             </div>
+            <IconButton
+                iconProps={ {
+                    iconName: "More",
+                    title: "More Options",
+                } }
+                tabIndex={-1}
+                data-is-focusable={false}
+                split={false}
+                className="options"
+                menuProps={{
+                    items: this.getMenuOptions(),
+                    isBeakVisible: false,
+                }}
+            />
         </a>;
+    }
+
+    private getMenuOptions(): IContextualMenuItem[] {
+        return [
+            {
+                key: "Delete",
+                icon: "Delete",
+                name: "Delete (del)",
+                onClick: (e) => {
+                    if (!e) { return; }
+                    this.del(e);
+                },
+            },
+            // {
+            //     key: "Rename",
+            //     icon: "Rename",
+            //     name: "Rename (f2)",
+            //     onClick: (e) => {
+            //         if (!e) { return; }
+            //         this.rename(e);
+            //     },
+            // },
+        ];
+    }
+
+    private file() {
+        const { files, idx } = this.props;
+        return files[idx];
+    }
+    private async del(e: React.SyntheticEvent<{}>) {
+        deleteAttachment(e.type, this.file());
+    }
+
+    private async openFile(e: React.SyntheticEvent<HTMLElement>) {
+        e.preventDefault();
+        e.stopPropagation();
+        const { files, idx } = this.props;
+        const file = this.file();
+        if (isPreviewable(file)) {
+            showDialog(e.type, files, idx);
+        } else {
+            const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
+            trackEvent("download", {trigger: e.type, fromParent: !!files[idx].fromParent + "", ...getProps()});
+            navigationService.openNewWindow(getFileUrl(file), "");
+        }
     }
 }

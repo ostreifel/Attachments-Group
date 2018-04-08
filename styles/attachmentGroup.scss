@@ -36,6 +36,7 @@
             border: 1px solid transparent;
             text-decoration: none;
             height: 130px;
+            position: relative;
             &:focus {
                 background-color: aliceblue;
             }
@@ -44,6 +45,18 @@
             }
             &:not(:hover) {
                 .title .delete-button {
+                    display: none;
+                }
+                .options {
+                    visibility: hidden;
+                }
+            }
+            .options {
+                position: absolute;
+                background-color: white;
+                top: 0px;
+                right: 0px;
+                .ms-Button-menuIcon {
                     display: none;
                 }
             }
