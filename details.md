@@ -44,7 +44,7 @@ Within the same Weblayout choose a Section element and add
 ```
 
 # Change Log
-(04/06/18) 1.1.1 mp4 previews, change comments, rename files  
+(04/07/18) 1.1.1 mp4 previews, change comments, rename files  
 (04/06/18) 1.0.56 Pdf previews  
 (04/04/18) 1.0.35 Show parent attachments  
 (04/04/18) 1.0.27 Add more file icons  
