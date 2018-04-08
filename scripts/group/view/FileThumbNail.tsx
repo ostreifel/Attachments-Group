@@ -5,17 +5,21 @@ import * as React from "react";
 import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 import { KeyCode } from "VSS/Utils/UI";
 
-import { showDialog } from "../../dialog/showDialog";
+import { showGalleryDialog } from "../../dialog/showGalleryDialog";
 import { trackEvent } from "../../events";
 import { getFileUrl, isImageFile, isPreviewable } from "../../fileType";
-import { IFileAttachment } from "../../IFileAttachment";
 import { deleteAttachment, editComment, getProps, renameAttachment } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
+import { IFileThumbnail } from "./IFileThumbnail";
+import { showAttachments } from "./showAttachments";
 
 export interface IFileThumbNailProps {
     idx: number;
-    files: IFileAttachment[];
+    files: IFileThumbnail[];
 }
+
+let isShift: boolean = false;
+let isCtr: boolean = false;
 
 export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     public render() {
@@ -31,17 +35,33 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
             file.attributes.comment || ""
         }`;
         return <a
-            className="thumbnail-tile"
+            className={`thumbnail-tile ${file.selected ? "selected" : ""}`}
             href={fileUrl}
-            onClick={this.openFile.bind(this)}
-            onKeyDown={(e) => {
+            onFocus={this.onFocus.bind(this)}
+            onClick={this.onClick.bind(this)}
+            onDoubleClick={this.openFile.bind(this)}
+            onMouseDown={(e) => {
+                isShift = e.shiftKey;
+                isCtr = e.ctrlKey;
+            }}
+            onKeyDown={async (e) => {
                 if (e.keyCode === KeyCode.ENTER) {
-                    this.openFile(e);
+                    await this.openFile(e);
                 } else if (e.keyCode === KeyCode.DELETE) {
-                    this.del(e);
+                    await this.del(e);
                 } else if (e.keyCode === KeyCode.F2) {
-                    renameAttachment(e.type, file);
+                    await this.rename(e);
+                } else if (e.keyCode === KeyCode.D && e.shiftKey) {
+                    await this.openFile(e, "force download");
+                } else if (e.keyCode === KeyCode.C && e.shiftKey) {
+                    await this.comment(e);
+                } else if (e.keyCode === KeyCode.F10 && e.shiftKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(e.target).find(".options").click();
                 }
+                isShift = e.shiftKey;
+                isCtr = e.ctrlKey;
             }}
         >
             <div
@@ -66,7 +86,10 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                     /> : null
                 }
             </div>
-            <div className="title">
+            <div className="title" onClick={(e) => {
+                e.type = "title";
+                this.openFile(e);
+            }}>
                 <div className="text" title={file.attributes.name}>{file.attributes.name}</div>
             </div>
             <IconButton
@@ -86,66 +109,143 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         </a>;
     }
 
-    private async openFile(e: React.SyntheticEvent<HTMLElement>, forceDownload?: "force download") {
+    private onClick(e: React.MouseEvent<HTMLAnchorElement>) {
+        // Don't navigate link
         e.preventDefault();
-        e.stopPropagation();
-        const { files, idx } = this.props;
-        const file = this.file();
-        if (isPreviewable(file) && !forceDownload) {
-            showDialog(e.type, files, idx);
-        } else {
-            const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
-            trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(files[idx])});
-            navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
-        }
     }
 
-    private getMenuOptions(): IContextualMenuItem[] {
-        return [
-            {
-                key: "Delete",
-                icon: "Delete",
-                name: "Delete (del)",
-                onClick: (e) => {
-                    if (!e) { return; }
-                    this.del(e);
-                },
-            },
-            {
-                key: "Rename",
-                icon: "Rename",
-                name: "Rename (f2)",
-                onClick: (e) => {
-                    if (!e) { return; }
-                    renameAttachment(e.type, this.file());
-                },
-            },
-            {
-                key: "Comment",
-                icon: "Comment",
-                name: "Edit Comment",
-                onClick: (e) => {
-                    if (!e) { return; }
-                    editComment(e.type, this.file());
-                },
-            },
-            {
-                key: "Download",
-                icon: "Download",
-                name: "Download",
-                onClick: (e) => {
-                    if (!e) { return; }
-                    this.openFile(e, "force download");
-                },
-            },
-        ];
+    private onFocus(
+        e: React.FocusEvent<HTMLAnchorElement>,
+    ) {
+        const thisFile = this.file();
+        const {files} = this.props;
+        if (e.target instanceof HTMLButtonElement && $(e.target).hasClass("options")) {
+            if (!thisFile.selected) {
+                files.forEach((f) => f.selected = false);
+                thisFile.selected = true;
+                showAttachments(this.props.files, false);
+            }
+            return;
+        }
+        if (isShift) {
+            thisFile.selected = true;
+            const thisIdx = this.props.idx;
+            let foundSelected = false;
+            let idx = -1;
+            for (idx = thisIdx - 1; idx >= 0; idx--) {
+                foundSelected = !!files[idx].selected;
+                if (foundSelected) {
+                    break;
+                }
+            }
+            if (!foundSelected) {
+                for (idx = thisIdx + 1; idx < files.length; idx++) {
+                    foundSelected = !!files[idx].selected;
+                    if (foundSelected) {
+                        break;
+                    }
+                }
+            }
+            if (foundSelected) {
+                const start = Math.min(idx, thisIdx);
+                const end = Math.max(idx, thisIdx);
+                for (let i = start + 1; i < end; i++) {
+                    files[i].selected = true;
+                }
+            }
+        } else if (isCtr) {
+            thisFile.selected = true;
+        } else {
+            files.forEach((f) => f.selected = false);
+            thisFile.selected  = true;
+        }
+        showAttachments(this.props.files, false);
     }
 
     private file() {
         const { files, idx } = this.props;
         return files[idx];
     }
-    private async del(e: React.SyntheticEvent<{}>) {
-        deleteAttachment(e.type, this.file());
+
+    private selected(): IFileThumbnail[] {
+        return this.props.files.filter((f) => f.selected);
+    }
+
+    private getMenuOptions(): IContextualMenuItem[] {
+        const options: IContextualMenuItem[] = [
+            {
+                key: "Delete",
+                icon: "Delete",
+                name: "Delete (del)",
+                onClick: this.del.bind(this),
+            },
+            {
+                key: "Download",
+                icon: "Download",
+                name: "Download (shift + d)",
+                onClick: (e) => {
+                    if (!e) { return; }
+                    this.openFile(e, "force download");
+                },
+            },
+        ];
+        if (this.selected().length <= 1) {
+            options.push(
+                {
+                    key: "Rename",
+                    icon: "Rename",
+                    name: "Rename (f2)",
+                    onClick: this.rename.bind(this),
+                },
+                {
+                    key: "Comment",
+                    icon: "Comment",
+                    name: "Edit Comment (shift + c)",
+                    onClick: this.comment.bind(this),
+                },
+            );
+        }
+        return options;
+    }
+
+    private findLink(e: React.SyntheticEvent<HTMLElement>): HTMLAnchorElement {
+        const target = e.currentTarget;
+        if (target instanceof HTMLAnchorElement) {
+            return target;
+        }
+        return $(target).closest("a")[0] as HTMLAnchorElement;
+    }
+
+    private async openFile(e: React.SyntheticEvent<HTMLElement>, forceDownload?: "force download") {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = this.file();
+        const { files, idx } = this.props;
+        const link = this.findLink(e);
+        if (isPreviewable(file) && !forceDownload) {
+            await showGalleryDialog(e.type, files, idx);
+            link.focus();
+        } else {
+            const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
+            trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(file)});
+            navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
+        }
+    }
+
+    private async del(e?: React.SyntheticEvent<HTMLElement>) {
+        if (!e) { return; }
+        const link = this.findLink(e);
+        await deleteAttachment(e.type, this.file());
+        link.focus();
+    }
+
+    private async rename(e?: React.SyntheticEvent<HTMLElement>) {
+        if (!e) { return; }
+        await renameAttachment(e.type, this.file());
+    }
+
+    private async comment(e?: React.SyntheticEvent<HTMLElement>) {
+        if (!e) { return; }
+        await editComment(e.type, this.file());
     }
 }

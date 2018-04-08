@@ -4,7 +4,7 @@ import { getProps } from "../group/attachmentManager";
 import { IFileAttachment } from "../IFileAttachment";
 import { IContextOptions } from "./IContextOptions";
 
-export async function showDialog(trigger: string, files: IFileAttachment[], idx: number) {
+export async function showGalleryDialog(trigger: string, files: IFileAttachment[], idx: number): Promise<void> {
     const previewFiles: IFileAttachment[] = [];
     let offset = 0;
     for (let i = 0; i < files.length; i++) {
@@ -31,19 +31,23 @@ export async function showDialog(trigger: string, files: IFileAttachment[], idx:
             closeDialog();
         },
     };
-    const dialogOptions: IHostDialogOptions = {
-        title: previewFiles[idx].attributes.name,
-        width: Number.MAX_VALUE,
-        height: Number.MAX_VALUE,
-        resizable: true,
-        buttons: [],
-    };
-    const extInfo = VSS.getExtensionContext();
 
-    const contentContribution = `${extInfo.publisherId}.${extInfo.extensionId}.imageGallery`;
-    const dialog = await dialogService.openDialog(contentContribution, dialogOptions, context);
-    setTitle = (title: string) => dialog.setTitle(title);
-    closeDialog = () => dialog.close();
-    /* const callbacks: ICallbacks =  */
-    await dialog.getContributionInstance("imageGallery");
+    return new Promise<void>(async (resolve) => {
+        const dialogOptions: IHostDialogOptions = {
+            title: previewFiles[idx].attributes.name,
+            width: Number.MAX_VALUE,
+            height: Number.MAX_VALUE,
+            resizable: true,
+            buttons: [],
+            close: resolve,
+        };
+        const extInfo = VSS.getExtensionContext();
+
+        const contentContribution = `${extInfo.publisherId}.${extInfo.extensionId}.imageGallery`;
+        const dialog = await dialogService.openDialog(contentContribution, dialogOptions, context);
+        setTitle = (title: string) => dialog.setTitle(title);
+        closeDialog = () => dialog.close();
+        /* const callbacks: ICallbacks =  */
+        await dialog.getContributionInstance("imageGallery");
+    });
 }
