@@ -154,6 +154,18 @@ export async function addFiles(trigger: string, files: FileList) {
     });
 }
 
+async function getWiId(file: IFileAttachment): Promise<number> {
+    const formService = await WorkItemFormService.getService();
+    const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
+    return id;
+}
+
+async function getIdx(id: number, file: IFileAttachment): Promise<number> {
+    const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+    const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
+    return idx;
+}
+
 export async function deleteAttachment(trigger: string, file: IFileAttachment) {
     const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
     try {
@@ -165,11 +177,9 @@ export async function deleteAttachment(trigger: string, file: IFileAttachment) {
     }
     tryExecute(async () => {
         trackEvent("delete", {trigger, ...getProps(file)});
-        const formService = await WorkItemFormService.getService();
-        const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
         setStatus("Getting work item to remove attachment from...");
-        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
+        const id = await getWiId(file);
+        const idx = await getIdx(id, file);
         if (idx < 0) {
             return;
         }
@@ -190,19 +200,18 @@ export async function deleteAttachment(trigger: string, file: IFileAttachment) {
 }
 
 export async function renameAttachment(trigger: string, file: IFileAttachment) {
-    const nameParts = fileNameParts(file.attributes.name);
+    const {name: oldName , ext} = fileNameParts(file.attributes.name);
 
-    const fileName = prompt("Enter new file name", nameParts.name) + (nameParts.ext || "");
-    if (!fileName) {
+    const newName = prompt("Enter new file name", oldName);
+    if (!newName) {
         return;
     }
+    const fileName = newName + (ext ?  `.${ext}` : "");
     tryExecute(async () => {
         trackEvent("rename", {trigger, ...getProps(file)});
-        const formService = await WorkItemFormService.getService();
-        const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
         setStatus("Getting work item to rename attachment for...");
-        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-        const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
+        const id = await getWiId(file);
+        const idx = await getIdx(id, file);
         if (idx < 0) {
             return;
         }
@@ -214,6 +223,36 @@ export async function renameAttachment(trigger: string, file: IFileAttachment) {
             } as JsonPatchOperation,
         ];
         setStatus("Renaming attachment...");
+        const updated = await getClient().updateWorkItem(patch, id);
+        if (file.fromParent) {
+            parent = updated;
+        }
+        currentWi = file.fromParent ? currentWi as WorkItem : updated;
+        await update(currentWi);
+    });
+}
+
+export async function editComment(trigger: string, file: IFileAttachment) {
+    const comment = prompt("Enter new comment", file.attributes.comment);
+    if (comment === null) {
+        return;
+    }
+    tryExecute(async () => {
+        trackEvent("rename", {trigger, ...getProps(file)});
+        setStatus("Getting work item to change comment attachment for...");
+        const id = await getWiId(file);
+        const idx = await getIdx(id, file);
+        if (idx < 0) {
+            return;
+        }
+        const patch: JsonPatchDocument & JsonPatchOperation[] = [
+            {
+                op: Operation.Add,
+                path: `/relations/${idx}/attributes/comment`,
+                value: comment,
+            } as JsonPatchOperation,
+        ];
+        setStatus("Changing attachment comment...");
         const updated = await getClient().updateWorkItem(patch, id);
         if (file.fromParent) {
             parent = updated;

@@ -9,7 +9,7 @@ import { showDialog } from "../../dialog/showDialog";
 import { trackEvent } from "../../events";
 import { getFileUrl, isImageFile, isPreviewable } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
-import { deleteAttachment, getProps, renameAttachment } from "../attachmentManager";
+import { deleteAttachment, editComment, getProps, renameAttachment } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
 
 export interface IFileThumbNailProps {
@@ -39,6 +39,8 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                     this.openFile(e);
                 } else if (e.keyCode === KeyCode.DELETE) {
                     this.del(e);
+                } else if (e.keyCode === KeyCode.F2) {
+                    renameAttachment(e.type, file);
                 }
             }}
         >
@@ -116,6 +118,15 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 onClick: (e) => {
                     if (!e) { return; }
                     renameAttachment(e.type, this.file());
+                },
+            },
+            {
+                key: "Comment",
+                icon: "Comment",
+                name: "Edit Comment",
+                onClick: (e) => {
+                    if (!e) { return; }
+                    editComment(e.type, this.file());
                 },
             },
         ];
