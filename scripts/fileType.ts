@@ -1,4 +1,6 @@
 import { BrowserCheckUtils } from "VSS/Utils/UI";
+
+import { getMimeTypes } from "./getMimeType";
 import { IFileAttachment } from "./IFileAttachment";
 
 export function fileNameParts(fileName: string) {
@@ -7,6 +9,34 @@ export function fileNameParts(fileName: string) {
     name: match ? match[1] : fileName,
     ext: match && match[2],
   };
+}
+
+export interface IFileClassification {
+  video: boolean;
+  image: boolean;
+  text: boolean;
+  application: boolean;
+  audio: boolean;
+}
+export function getClassification(ext: string): IFileClassification {
+  const classifications: IFileClassification = {
+    application: false,
+    audio: false,
+    image: false,
+    text: false,
+    video: false,
+  };
+  const mimeTypes = getMimeTypes(ext);
+  if (mimeTypes.length === 0) {
+      return classifications;
+  }
+  const classificationTexts = mimeTypes.map((t) => (/(.+)\//.exec(t) || [])[1]);
+  for (const c of classificationTexts) {
+      if (c) {
+          classifications[c] = true;
+      }
+  }
+  return classifications;
 }
 
 export function getFileExtension(fileName: string) {
@@ -24,7 +54,15 @@ export function isImageFile(file: IFileAttachment) {
   return imageRegex.test(file.attributes.name);
 }
 
-export function isPreviewable(file: IFileAttachment) {
+export function isTextFile(file: IFileAttachment) {
+  const ext = getFileExtension(file.attributes.name);
+  if (!ext) {
+    return false;
+  }
+  return getClassification(ext).text;
+}
+
+export function isPreviewable(file: IFileAttachment): boolean {
   if (isImageFile(file)) {
     return true;
   }
@@ -36,6 +74,6 @@ export function isPreviewable(file: IFileAttachment) {
     case "mp4":
       return !BrowserCheckUtils.isEdge() && !BrowserCheckUtils.isIE();
     default:
-      return false;
+      return isTextFile(file);
   }
 }

@@ -1,5 +1,4 @@
-import { getFileExtension } from "../../fileType";
-import { getMimeTypes } from "../../getMimeType";
+import { getClassification, getFileExtension } from "../../fileType";
 
 export type FileIcon = {
     type: "name"
@@ -21,26 +20,21 @@ const officeProdImage = (name: string): FileIcon => image(
 );
 
 function fromMime(ext: string): FileIcon | null {
-    const mimeTypes = getMimeTypes(ext);
-    if (mimeTypes.length === 0) {
-        return null;
+    const classifications = getClassification(ext);
+    if (classifications.video) {
+        return icon("Video");
     }
-    const classifications = mimeTypes.map((t) => (/(.+)\//.exec(t) || [])[1]);
-    let classification: string = "";
-    for (const c of classifications) {
-        if (!c || (classification && c !== classification)) {
-            return null;
-        }
-        classification = c;
+    if (classifications.image) {
+        return icon("FileImage");
     }
-    switch (classification) {
-        case "video":
-            return icon("Video");
-        case "image":
-            return icon("FileImage");
-        default:
-            return null;
+    if (classifications.text) {
+        return icon("TextDocument");
     }
+    if (classifications.audio) {
+        return icon("Volume3");
+    }
+
+    return null;
 }
 export function getFileIcon(fileName: string): FileIcon {
     const ext = getFileExtension(fileName);
@@ -142,9 +136,6 @@ export function getFileIcon(fileName: string): FileIcon {
         case "json":
         case "jsonc":
             return icon("Code");
-        case "txt":
-        case "log":
-            return icon("TextDocument");
         case "rtf":
             return officeDocImage("docx");
         case "pdf":

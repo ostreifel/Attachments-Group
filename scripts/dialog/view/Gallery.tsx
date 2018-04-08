@@ -4,9 +4,9 @@ import * as React from "react";
 import { KeyCode } from "VSS/Utils/UI";
 
 import { trackEvent } from "../../events";
-import { getFileExtension, getFileUrl, isImageFile } from "../../fileType";
+import { getFileExtension, getFileUrl, isImageFile, isTextFile } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
-import { updateIframe } from "../previewManager";
+import { showPdfFile, showTextFile } from "../previewManager";
 import { showGallery } from "../showGallery";
 
 initializeIcons();
@@ -51,18 +51,29 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
         this.afterRender();
     }
 
+    private afterRender() {
+        const {previewFiles, idx} = this.props;
+        const file = previewFiles[idx];
+        const ext = getFileExtension(file.attributes.name);
+        if (ext === "pdf") {
+            showPdfFile(file, this.getFileId());
+        } else if (isTextFile(file)) {
+            showTextFile(file, this.getFileId());
+        }
+    }
+
     private getPreview(file: IFileAttachment) {
         const props = {
             role: "button",
             tabIndex: 0,
             title: file.attributes.comment,
+            onClick: (e: React.MouseEvent<HTMLElement>) => e.stopPropagation(),
         };
         if (isImageFile(file)) {
             return <img
                 src={getFileUrl(file)}
                 className="image center"
                 {...props}
-                onClick={(e) => e.stopPropagation()}
             />;
         }
         const ext = getFileExtension(file.attributes.name);
@@ -82,6 +93,11 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
                 <source src={getFileUrl(file)} type="video/mp4"/>
                 Your browser does not support html5 video
             </video>;
+        }
+        if (isTextFile(file)) {
+            return <pre className="text center loading" {...props}>
+                <code id={this.getFileId()}>Loading text...</code>
+            </pre>;
         }
 
         return <div>{`Cannot preview ${ext} files`}</div>;
@@ -109,14 +125,6 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
             />
         </div> : <div />
         );
-    }
-
-    private afterRender() {
-        const {previewFiles, idx} = this.props;
-        const file = previewFiles[idx];
-        if (!isImageFile(file)) {
-            updateIframe(file, this.getFileId());
-        }
     }
 
     private getFileId() {

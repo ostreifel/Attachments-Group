@@ -30,6 +30,18 @@
                 height: 100%;
                 width: calc(100% - 120px);
             }
+            &.text {
+                height: 100%;
+                width: calc(100% - 120px);
+                background-color: white;
+                color: black;
+                white-space: pre-wrap;
+                word-break: break-word;
+                overflow-y: auto;
+                &.loading {
+                    background-color: lightgray;
+                }
+            }
         }
         .nav-button {
             width: 50px;
