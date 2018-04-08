@@ -59,6 +59,12 @@
                 .ms-Button-menuIcon {
                     display: none;
                 }
+                &:focus {
+                    border: 1px solid black;
+                }
+                &:hover {
+                    background-color: aliceblue;
+                }
             }
             .thumb-box {
                 width: 100px;
