@@ -43,10 +43,10 @@ export function getFileExtension(fileName: string) {
   return fileNameParts(fileName).ext;
 }
 
-export function getFileUrl(file: undefined): undefined;
-export function getFileUrl(file: IFileAttachment): string;
-export function getFileUrl(file?: IFileAttachment) {
-  return file && `${file.url}?filename=${file.attributes.name}`;
+export function getFileUrl(file: undefined, download?: boolean): undefined;
+export function getFileUrl(file: IFileAttachment, download?: boolean): string;
+export function getFileUrl(file?: IFileAttachment, download?: boolean) {
+  return file && `${file.url}?filename=${file.attributes.name}&download=${!!download}`;
 }
 
 const imageRegex = /\.jpe?g$|\.gif$|\.png$|\.bmp$|\.png$/i;

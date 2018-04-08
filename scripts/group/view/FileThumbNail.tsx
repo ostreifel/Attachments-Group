@@ -96,7 +96,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         } else {
             const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
             trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(files[idx])});
-            navigationService.openNewWindow(getFileUrl(file), "");
+            navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
         }
     }
 
