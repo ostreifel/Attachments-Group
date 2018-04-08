@@ -238,7 +238,7 @@ export async function editComment(trigger: string, file: IFileAttachment) {
         return;
     }
     tryExecute(async () => {
-        trackEvent("rename", {trigger, ...getProps(file)});
+        trackEvent("comment", {trigger, ...getProps(file)});
         setStatus("Getting work item to change comment attachment for...");
         const id = await getWiId(file);
         const idx = await getIdx(id, file);

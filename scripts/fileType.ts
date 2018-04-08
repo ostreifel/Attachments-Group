@@ -74,6 +74,6 @@ export function isPreviewable(file: IFileAttachment): boolean {
     case "mp4":
       return !BrowserCheckUtils.isEdge() && !BrowserCheckUtils.isIE();
     default:
-      return isTextFile(file);
+      return isTextFile(file) && !BrowserCheckUtils.isIE();
   }
 }
