@@ -86,16 +86,16 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         </a>;
     }
 
-    private async openFile(e: React.SyntheticEvent<HTMLElement>) {
+    private async openFile(e: React.SyntheticEvent<HTMLElement>, forceDownload?: "force download") {
         e.preventDefault();
         e.stopPropagation();
         const { files, idx } = this.props;
         const file = this.file();
-        if (isPreviewable(file)) {
+        if (isPreviewable(file) && !forceDownload) {
             showDialog(e.type, files, idx);
         } else {
             const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
-            trackEvent("download", {trigger: e.type, ...getProps(files[idx])});
+            trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(files[idx])});
             navigationService.openNewWindow(getFileUrl(file), "");
         }
     }
@@ -127,6 +127,15 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 onClick: (e) => {
                     if (!e) { return; }
                     editComment(e.type, this.file());
+                },
+            },
+            {
+                key: "Download",
+                icon: "Download",
+                name: "Download",
+                onClick: (e) => {
+                    if (!e) { return; }
+                    this.openFile(e, "force download");
                 },
             },
         ];
