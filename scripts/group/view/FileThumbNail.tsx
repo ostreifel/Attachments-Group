@@ -9,7 +9,7 @@ import { showDialog } from "../../dialog/showDialog";
 import { trackEvent } from "../../events";
 import { getFileUrl, isImageFile, isPreviewable } from "../../fileType";
 import { IFileAttachment } from "../../IFileAttachment";
-import { deleteAttachment, getProps } from "../attachmentManager";
+import { deleteAttachment, getProps, renameAttachment } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
 
 export interface IFileThumbNailProps {
@@ -84,6 +84,20 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         </a>;
     }
 
+    private async openFile(e: React.SyntheticEvent<HTMLElement>) {
+        e.preventDefault();
+        e.stopPropagation();
+        const { files, idx } = this.props;
+        const file = this.file();
+        if (isPreviewable(file)) {
+            showDialog(e.type, files, idx);
+        } else {
+            const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
+            trackEvent("download", {trigger: e.type, ...getProps(files[idx])});
+            navigationService.openNewWindow(getFileUrl(file), "");
+        }
+    }
+
     private getMenuOptions(): IContextualMenuItem[] {
         return [
             {
@@ -95,15 +109,15 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                     this.del(e);
                 },
             },
-            // {
-            //     key: "Rename",
-            //     icon: "Rename",
-            //     name: "Rename (f2)",
-            //     onClick: (e) => {
-            //         if (!e) { return; }
-            //         this.rename(e);
-            //     },
-            // },
+            {
+                key: "Rename",
+                icon: "Rename",
+                name: "Rename (f2)",
+                onClick: (e) => {
+                    if (!e) { return; }
+                    renameAttachment(e.type, this.file());
+                },
+            },
         ];
     }
 
@@ -113,19 +127,5 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     }
     private async del(e: React.SyntheticEvent<{}>) {
         deleteAttachment(e.type, this.file());
-    }
-
-    private async openFile(e: React.SyntheticEvent<HTMLElement>) {
-        e.preventDefault();
-        e.stopPropagation();
-        const { files, idx } = this.props;
-        const file = this.file();
-        if (isPreviewable(file)) {
-            showDialog(e.type, files, idx);
-        } else {
-            const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
-            trackEvent("download", {trigger: e.type, fromParent: !!files[idx].fromParent + "", ...getProps()});
-            navigationService.openNewWindow(getFileUrl(file), "");
-        }
     }
 }

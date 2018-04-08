@@ -3,8 +3,9 @@ import { getClient } from "TFS/WorkItemTracking/RestClient";
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import * as Utils_Date from "VSS/Utils/Date";
 import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Contracts";
+
 import { IProperties, trackEvent } from "../events";
-import { isImageFile } from "../fileType";
+import { fileNameParts, getFileExtension, isImageFile } from "../fileType";
 import { IFileAttachment } from "../IFileAttachment";
 import { getStatus, setError, setStatus, showAttachments } from "./view/showAttachments";
 
@@ -26,8 +27,13 @@ async function tryExecute(callback: () => Promise<void>) {
     }
 }
 
-export function getProps(): IProperties {
+export function getProps(file?: IFileAttachment): IProperties {
+    const fileProps: IProperties = file ? {
+        fromParent: !!file.fromParent + "",
+        ext: getFileExtension(file.attributes.name) || "",
+    } : {};
     return {
+        ...fileProps,
         attachments: attachments.length + "",
         parentAttachments: attachments.filter((a) => a.fromParent).length + "",
         images: attachments.filter(isImageFile).length + "",
@@ -116,7 +122,11 @@ export async function addFiles(trigger: string, files: FileList) {
         return;
     }
     tryExecute(async () => {
-        trackEvent("add", {trigger, adding: files.length + "", ...getProps()});
+        let exts = "";
+        for (let i = 0; i < files.length; i++) {
+            exts += getFileExtension(files.item(i).name) || "";
+        }
+        trackEvent("add", {trigger, adding: files.length + "", exts, ...getProps()});
         const readerPromises: IPromise<AttachmentReference>[] = [];
         setStatus("Creating attachments...");
         for (let i = 0; i < files.length; i++) {
@@ -146,33 +156,69 @@ export async function addFiles(trigger: string, files: FileList) {
 
 export async function deleteAttachment(trigger: string, file: IFileAttachment) {
     const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
-    return dialogService.openMessageDialog(`Permanently delete ${file.attributes.name} ${
-        file.fromParent && parent ? ` from "${parent.fields["System.Title"]}"` : ""
-    }?`)
-    .then(() => {
-        tryExecute(async () => {
-            trackEvent("delete", {trigger, fromParent: !!file.fromParent + "", ...getProps()});
-            const formService = await WorkItemFormService.getService();
-            const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
-            setStatus("Getting work item to remove attachment from...");
-            const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
-            const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
-            if (idx < 0) {
-                return;
-            }
-            const patch: JsonPatchDocument & JsonPatchOperation[] = [
-                {
-                    op: Operation.Remove,
-                    path: `/relations/${idx}`,
-                } as JsonPatchOperation,
-            ];
-            setStatus("Removing attachment...");
-            const updated = await getClient().updateWorkItem(patch, id);
-            if (file.fromParent) {
-                parent = updated;
-            }
-            currentWi = file.fromParent ? currentWi as WorkItem : updated;
-            await update(currentWi);
-        });
+    try {
+        await dialogService.openMessageDialog(`Permanently delete ${file.attributes.name} ${
+            file.fromParent && parent ? ` from "${parent.fields["System.Title"]}"` : ""
+        }?`);
+    } catch {
+        return;
+    }
+    tryExecute(async () => {
+        trackEvent("delete", {trigger, ...getProps(file)});
+        const formService = await WorkItemFormService.getService();
+        const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
+        setStatus("Getting work item to remove attachment from...");
+        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+        const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
+        if (idx < 0) {
+            return;
+        }
+        const patch: JsonPatchDocument & JsonPatchOperation[] = [
+            {
+                op: Operation.Remove,
+                path: `/relations/${idx}`,
+            } as JsonPatchOperation,
+        ];
+        setStatus("Removing attachment...");
+        const updated = await getClient().updateWorkItem(patch, id);
+        if (file.fromParent) {
+            parent = updated;
+        }
+        currentWi = file.fromParent ? currentWi as WorkItem : updated;
+        await update(currentWi);
+    });
+}
+
+export async function renameAttachment(trigger: string, file: IFileAttachment) {
+    const nameParts = fileNameParts(file.attributes.name);
+
+    const fileName = prompt("Enter new file name", nameParts.name) + (nameParts.ext || "");
+    if (!fileName) {
+        return;
+    }
+    tryExecute(async () => {
+        trackEvent("rename", {trigger, ...getProps(file)});
+        const formService = await WorkItemFormService.getService();
+        const id = file.fromParent ? (parent as WorkItem).id : await formService.getId();
+        setStatus("Getting work item to rename attachment for...");
+        const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+        const idx = (wi.relations || []).map(({url}) => url).indexOf(file.url);
+        if (idx < 0) {
+            return;
+        }
+        const patch: JsonPatchDocument & JsonPatchOperation[] = [
+            {
+                op: Operation.Replace,
+                path: `/relations/${idx}/attributes/name`,
+                value: fileName,
+            } as JsonPatchOperation,
+        ];
+        setStatus("Renaming attachment...");
+        const updated = await getClient().updateWorkItem(patch, id);
+        if (file.fromParent) {
+            parent = updated;
+        }
+        currentWi = file.fromParent ? currentWi as WorkItem : updated;
+        await update(currentWi);
     });
 }

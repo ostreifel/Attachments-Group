@@ -1,10 +1,16 @@
 import { BrowserCheckUtils } from "VSS/Utils/UI";
 import { IFileAttachment } from "./IFileAttachment";
 
+export function fileNameParts(fileName: string) {
+  const match = /^(.*)\.(.+?)$/.exec(fileName);
+  return {
+    name: match ? match[1] : fileName,
+    ext: match && match[2],
+  };
+}
+
 export function getFileExtension(fileName: string) {
-  const match = /^.*\.(.+?)$/.exec(fileName);
-  const ext = match && match[1].toLowerCase();
-  return ext;
+  return fileNameParts(fileName).ext;
 }
 
 export function getFileUrl(file: undefined): undefined;
