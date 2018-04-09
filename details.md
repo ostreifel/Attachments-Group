@@ -5,7 +5,12 @@
 ![dragging paperclip logo onto attachments group](img/dragAndDrop.png)  
 ## Commands
 ![context menu on top corner of preview tile](img/commands.png)
-## Click to show fullsize
+## Bulk Commands
+Shift/ctr click/arrow to select multiple files  
+![bulk edit commands](img/bulkCommands.png)
+## Show fullsize
+Double click tile or single click title to show preview  
+This can also be done by pressing enter while the tile is focused.  
 ![click paper logo](img/clickThumbnail.png)  
 ![dialog with larger image of paper clip logo](img/largerPreview.png)  
 ### Preview Pdfs
@@ -44,6 +49,7 @@ Within the same Weblayout choose a Section element and add
 ```
 
 # Change Log
+(04/08/18) 1.2.1 bulk delete, bulk download, ctr + a select all
 (04/07/18) 1.1.14 text preview, auxilary download button for files that would otherwise preview on click  
 (04/07/18) 1.1.1 mp4 previews, change comments, rename files  
 (04/06/18) 1.0.56 Pdf previews  
