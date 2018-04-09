@@ -32,6 +32,7 @@ export function getProps(files?: IFileAttachment | IFileAttachment[]): IProperti
         files = [files];
     }
     const fileProps: IProperties = files ? {
+        selected: files.length + "",
         fromParent: files.map((f) => !!f.fromParent + "").join(" "),
         ext: files.map((f) => getFileExtension(f.attributes.name) || "").join(" "),
     } : {};

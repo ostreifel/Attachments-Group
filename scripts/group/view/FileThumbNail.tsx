@@ -220,16 +220,19 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     private async openFile(e: React.SyntheticEvent<HTMLElement>, forceDownload?: "force download") {
         e.preventDefault();
         e.stopPropagation();
-        const file = this.file();
-        const { files, idx } = this.props;
-        const link = this.findLink(e);
-        if (isPreviewable(file) && !forceDownload) {
+        const selected = this.selected();
+        if (isPreviewable(this.file()) && !forceDownload) {
+            const files = selected.length > 1 ? selected : this.props.files;
+            const idx = selected.length > 1 ? files.map(({url}) => url).indexOf(this.file().url) : this.props.idx;
+            const link = this.findLink(e);
             await showGalleryDialog(e.type, files, idx);
             link.focus();
         } else {
             const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
-            trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(file)});
-            navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
+            trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(selected)});
+            for (const file of selected) {
+                navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
+            }
         }
     }
 
