@@ -60,6 +60,11 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                     e.preventDefault();
                     e.stopPropagation();
                     $(e.target).find(".options").click();
+                } else if (e.keyCode === KeyCode.A && e.ctrlKey) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.props.files.forEach((f) => f.selected = true);
+                    showAttachments(this.props.files, false);
                 }
                 isShift = e.shiftKey;
                 isCtr = e.ctrlKey;
