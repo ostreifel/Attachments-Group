@@ -8,7 +8,7 @@ import { KeyCode } from "VSS/Utils/UI";
 import { showGalleryDialog } from "../../dialog/showGalleryDialog";
 import { trackEvent } from "../../events";
 import { getFileUrl, isImageFile, isPreviewable } from "../../fileType";
-import { deleteAttachment, editComment, getProps, renameAttachment } from "../attachmentManager";
+import { deleteAttachments, editComment, getProps, renameAttachment } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
 import { IFileThumbnail } from "./IFileThumbnail";
 import { showAttachments } from "./showAttachments";
@@ -45,6 +45,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 isCtr = e.ctrlKey;
             }}
             onKeyDown={async (e) => {
+                e.persist();
                 if (e.keyCode === KeyCode.ENTER) {
                     await this.openFile(e);
                 } else if (e.keyCode === KeyCode.DELETE) {
@@ -235,7 +236,7 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     private async del(e?: React.SyntheticEvent<HTMLElement>) {
         if (!e) { return; }
         const link = this.findLink(e);
-        await deleteAttachment(e.type, this.file());
+        await deleteAttachments(e.type, this.selected());
         link.focus();
     }
 

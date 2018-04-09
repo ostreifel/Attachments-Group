@@ -27,10 +27,13 @@ async function tryExecute(callback: () => Promise<void>) {
     }
 }
 
-export function getProps(file?: IFileAttachment): IProperties {
-    const fileProps: IProperties = file ? {
-        fromParent: !!file.fromParent + "",
-        ext: getFileExtension(file.attributes.name) || "",
+export function getProps(files?: IFileAttachment | IFileAttachment[]): IProperties {
+    if (files && !(files instanceof Array)) {
+        files = [files];
+    }
+    const fileProps: IProperties = files ? {
+        fromParent: files.map((f) => !!f.fromParent + "").join(" "),
+        ext: files.map((f) => getFileExtension(f.attributes.name) || "").join(" "),
     } : {};
     return {
         ...fileProps,
@@ -166,36 +169,52 @@ async function getIdx(id: number, file: IFileAttachment): Promise<number> {
     return idx;
 }
 
-export async function deleteAttachment(trigger: string, file: IFileAttachment) {
-    const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
-    try {
-        await dialogService.openMessageDialog(`Permanently delete ${file.attributes.name} ${
-            file.fromParent && parent ? ` from "${parent.fields["System.Title"]}"` : ""
-        }?`);
-    } catch {
-        return;
-    }
-    tryExecute(async () => {
-        trackEvent("delete", {trigger, ...getProps(file)});
-        setStatus("Getting work item to remove attachment from...");
-        const id = await getWiId(file);
-        const idx = await getIdx(id, file);
-        if (idx < 0) {
+async function getIdxes(id: number, files: IFileAttachment[]): Promise<number[]> {
+    const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
+    const urls: {[url: string]: number} = {};
+    wi.relations.forEach((rel, i) => urls[rel.url] = i);
+    return files.map((f) => urls[f.url]).filter((idx) => idx);
+}
+
+export async function deleteAttachments(trigger: string, files: IFileAttachment[]) {
+    return tryExecute(async () => {
+        const dialogService = await VSS.getService(VSS.ServiceIds.Dialog) as IHostDialogService;
+        try {
+            await dialogService.openMessageDialog(`Permanently delete ${
+                files.map((f) => f.attributes.name).join(", ")
+            }?`);
+        } catch {
             return;
         }
-        const patch: JsonPatchDocument & JsonPatchOperation[] = [
-            {
-                op: Operation.Remove,
-                path: `/relations/${idx}`,
-            } as JsonPatchOperation,
-        ];
-        setStatus("Removing attachment...");
-        const updated = await getClient().updateWorkItem(patch, id);
-        if (file.fromParent) {
-            parent = updated;
+
+        async function deleteFiles(id: number | null, wiFiles: IFileAttachment[]): Promise<WorkItem | null> {
+            if (!id || wiFiles.length === 0) {
+                return null;
+            }
+            setStatus("Getting work item to remove attachment(s) from...");
+            const idxes = await getIdxes(id, wiFiles);
+            if (idxes.length === 0) {
+                return null;
+            }
+            setStatus("Removing attachment(s)...");
+            const patch: JsonPatchDocument & JsonPatchOperation[] = idxes.map((idx) =>
+                ({
+                    op: Operation.Remove,
+                    path: `/relations/${idx}`,
+                }) as JsonPatchOperation);
+            return getClient().updateWorkItem(patch, id);
         }
-        currentWi = file.fromParent ? currentWi as WorkItem : updated;
-        await update(currentWi);
+        trackEvent("delete", {trigger, ...getProps(files)});
+        const parentFiles = files.filter(({fromParent}) => fromParent);
+        const parentPromise = deleteFiles(parent && parent.id, parentFiles);
+        const childFiles = files.filter(({fromParent}) => !fromParent);
+        const childPromise = deleteFiles(currentWi && currentWi.id, childFiles);
+
+        const [updatedParent, updatedChild] = await Promise.all([parentPromise, childPromise]);
+
+        parent  = updatedParent || parent;
+        currentWi = updatedChild || currentWi;
+        await update(currentWi as WorkItem);
     });
 }
 
