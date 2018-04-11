@@ -55,9 +55,19 @@ export function isImageFile(file: IFileAttachment) {
 }
 
 export function isTextFile(file: IFileAttachment) {
+  if (file.attributes.name.toLocaleLowerCase() === "license") {
+    return true;
+  }
   const ext = getFileExtension(file.attributes.name);
   if (!ext) {
     return false;
+  }
+  switch (ext) {
+    case "md":
+    case "cs":
+    case "json":
+    case "gitignore":
+    return true;
   }
   return getClassification(ext).text;
 }
