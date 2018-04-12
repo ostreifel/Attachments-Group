@@ -6,6 +6,7 @@ import { IFileAttachment } from "../../IFileAttachment";
 import { FileThumbnails } from "./FileThumbNails";
 
 initializeIcons();
+resize();
 
 function resize() {
     const altMin = $(".callout").outerHeight() as number;
