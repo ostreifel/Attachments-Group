@@ -126,15 +126,20 @@ export async function addFiles(trigger: string, files: FileList) {
         return;
     }
     tryExecute(async () => {
-        let exts = "";
+        const exts: string[] = [];
         for (let i = 0; i < files.length; i++) {
-            exts += getFileExtension(files.item(i).name) || "";
+            const file = files.item(i);
+            if (!file) { continue; }
+            const ext = getFileExtension(file.name);
+            if (!ext) { continue; }
+            exts.push(ext);
         }
-        trackEvent("add", {trigger, adding: files.length + "", exts, ...getProps()});
+        trackEvent("add", {trigger, adding: files.length + "", exts: exts.join(" "), ...getProps()});
         const readerPromises: IPromise<AttachmentReference>[] = [];
         setStatus("Creating attachments...");
         for (let i = 0; i < files.length; i++) {
             const file = files.item(i);
+            if (!file) { continue; }
             readerPromises.push(getClient().createAttachment(file, file.name));
         }
         const refs = await Promise.all(readerPromises);
