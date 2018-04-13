@@ -22,10 +22,12 @@
     }
 }
 .main-content {
+    #attachment-container {
+        padding: 5px;
+    }
     #attachment-container .file-thumbnails {
         display: flex;
         flex-wrap: wrap;
-        padding: 5px;
         &.dropping-files {
             background-color: aliceblue;
         }
