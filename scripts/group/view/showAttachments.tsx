@@ -9,13 +9,17 @@ initializeIcons();
 resize();
 
 function resize() {
-    const altMin = $(".callout").outerHeight() as number;
-    if (altMin > ($(".main-content").outerHeight() as number)) {
+    const altMin = $(".callout").outerHeight() || 78;
+    const contentHeight = $(".main-content").outerHeight() || 150;
+    if (altMin > contentHeight) {
         VSS.resize(undefined, altMin + 16);
     } else {
-        VSS.resize();
+        VSS.resize(undefined, contentHeight);
     }
 }
+
+const delayedResize = new DelayedFunction(null, 150, "", resize);
+$("body").resize(() => delayedResize.reset());
 
 function afterRender() {
     setStatus("");
