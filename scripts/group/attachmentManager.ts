@@ -9,7 +9,7 @@ import { fileNameParts, getFileExtension, isImageFile } from "../fileType";
 import { IFileAttachment } from "../IFileAttachment";
 import { getStatus, setError, setStatus, showAttachments } from "./view/showAttachments";
 
-async function tryExecute(callback: () => Promise<void>) {
+export async function tryExecute(callback: () => Promise<void>) {
     try {
         await callback();
         setStatus("");

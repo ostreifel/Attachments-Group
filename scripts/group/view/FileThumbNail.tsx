@@ -8,10 +8,10 @@ import { KeyCode } from "VSS/Utils/UI";
 import { showGalleryDialog } from "../../dialog/showGalleryDialog";
 import { trackEvent } from "../../events";
 import { getFileUrl, isImageFile, isPreviewable } from "../../fileType";
-import { deleteAttachments, editComment, getProps, renameAttachment } from "../attachmentManager";
+import { deleteAttachments, editComment, getProps, renameAttachment, tryExecute } from "../attachmentManager";
 import { getFileIcon } from "./getFileIcon";
 import { IFileThumbnail } from "./IFileThumbnail";
-import { showAttachments } from "./showAttachments";
+import { setStatus, showAttachments } from "./showAttachments";
 
 export interface IFileThumbNailProps {
     idx: number;
@@ -225,20 +225,24 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
     private async openFile(e: React.SyntheticEvent<HTMLElement>, forceDownload?: "force download") {
         e.preventDefault();
         e.stopPropagation();
-        const selected = this.selected();
-        if (isPreviewable(this.file()) && !forceDownload) {
-            const files = selected.length > 1 ? selected : this.props.files;
-            const idx = selected.length > 1 ? files.map(({url}) => url).indexOf(this.file().url) : this.props.idx;
-            const link = this.findLink(e);
-            await showGalleryDialog(e.type, files, idx);
-            link.focus();
-        } else {
-            const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
-            trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(selected)});
-            for (const file of selected) {
-                navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
+        tryExecute(async () => {
+            const selected = this.selected();
+            if (isPreviewable(this.file()) && !forceDownload) {
+                setStatus("showing preview gallery...");
+                const files = selected.length > 1 ? selected : this.props.files;
+                const idx = selected.length > 1 ? files.map(({url}) => url).indexOf(this.file().url) : this.props.idx;
+                const link = this.findLink(e);
+                await showGalleryDialog(e.type, files, idx);
+                link.focus();
+            } else {
+                setStatus("downloading files...");
+                const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
+                trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(selected)});
+                for (const file of selected) {
+                    navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
+                }
             }
-        }
+        });
     }
 
     private async del(e?: React.SyntheticEvent<HTMLElement>) {
