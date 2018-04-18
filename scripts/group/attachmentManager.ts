@@ -179,7 +179,7 @@ async function getIdxes(id: number, files: IFileAttachment[]): Promise<number[]>
     const wi = await getClient().getWorkItem(id, undefined, undefined, WorkItemExpand.Relations);
     const urls: {[url: string]: number} = {};
     wi.relations.forEach((rel, i) => urls[rel.url] = i);
-    return files.map((f) => urls[f.url]).filter((idx) => idx);
+    return files.map((f) => urls[f.url]).filter((idx) => typeof idx === "number");
 }
 
 export async function deleteAttachments(trigger: string, files: IFileAttachment[]) {
@@ -208,7 +208,7 @@ export async function deleteAttachments(trigger: string, files: IFileAttachment[
                     op: Operation.Remove,
                     path: `/relations/${idx}`,
                 }) as JsonPatchOperation);
-            return getClient().updateWorkItem(patch, id);
+            return await getClient().updateWorkItem(patch, id);
         }
         trackEvent("delete", {trigger, ...getProps(files)});
         const parentFiles = files.filter(({fromParent}) => fromParent);

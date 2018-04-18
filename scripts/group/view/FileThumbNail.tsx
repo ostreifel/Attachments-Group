@@ -249,7 +249,9 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         if (!e) { return; }
         const link = this.findLink(e);
         await deleteAttachments(e.type, this.selected());
-        link.focus();
+        if (link) {
+            link.focus();
+        }
     }
 
     private async rename(e?: React.SyntheticEvent<HTMLElement>) {

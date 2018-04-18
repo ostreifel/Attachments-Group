@@ -28,6 +28,7 @@
     #attachment-container .file-thumbnails {
         display: flex;
         flex-wrap: wrap;
+        min-height: 78px;
         &.dropping-files {
             background-color: aliceblue;
         }
