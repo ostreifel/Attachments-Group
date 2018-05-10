@@ -66,7 +66,7 @@ export class Gallery extends React.Component<IGalleryProps, {}> {
         const props = {
             role: "button",
             tabIndex: 0,
-            title: file.attributes.comment,
+            title: file.attributes.comment || file.attributes.name,
             onClick: (e: React.MouseEvent<HTMLElement>) => e.stopPropagation(),
         };
         if (isImageFile(file)) {

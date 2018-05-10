@@ -28,11 +28,9 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
         const icon = isImage ? null : getFileIcon(file.attributes.name);
         const fileUrl = getFileUrl(file);
         const title = `${
-            file.fromParent ? "From parent" : ""
+            file.fromParent ? "From parent: " : ""
         }${
-            file.fromParent && file.attributes.comment ? ": " : ""
-        }${
-            file.attributes.comment || ""
+            file.attributes.comment || file.attributes.name
         }`;
         return <a
             className={`thumbnail-tile ${file.selected ? "selected" : ""}`}

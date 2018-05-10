@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "attachments-group",
-    "version": "1.2.29",
+    "version": "1.2.33",
     "name": "Attachments Group",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Preview image attachments from the work item form",
