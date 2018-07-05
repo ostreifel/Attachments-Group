@@ -22,8 +22,8 @@ Common file types will show approriate icons to make them easier to find.
 ![all office file types, many source code file types](img/availableIcons.png)
 
 ## Parent Attachments
-Parent attachements will be shown with an up arrow overlay.
-![2 parent attachments: 1 image, 1 powerpoint](img/parentAttachments.png)
+Parent attachements will be shown with an up arrow overlay.  
+![2 parent attachments: 1 image, 1 powerpoint](img/parentAttachments.png)  
 
 # Configuration with Visual Studio Team Services 
 
