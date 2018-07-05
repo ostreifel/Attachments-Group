@@ -21,7 +21,7 @@ export class AddAttachment extends React.Component<{}, {}> {
                     iconName: "Add",
                 } }
             >
-                Add Files(s)
+                Add File(s)
             </ActionButton>
         </div>;
     }
