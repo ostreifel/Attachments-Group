@@ -49,6 +49,7 @@ Within the same Weblayout choose a Section element and add
 ```
 
 # Change Log
+(07/05/18) 1.2.37 Fix typo and update screenshots
 (04/08/18) 1.2.1 bulk delete, bulk download, ctr + a select all
 (04/07/18) 1.1.14 text preview, auxilary download button for files that would otherwise preview on click  
 (04/07/18) 1.1.1 mp4 previews, change comments, rename files  
