@@ -2,7 +2,6 @@ import { IconButton } from "office-ui-fabric-react/lib/Button";
 import { IContextualMenuItem } from "office-ui-fabric-react/lib/ContextualMenu";
 import { Icon } from "office-ui-fabric-react/lib/Icon";
 import * as React from "react";
-import { HostNavigationService } from "VSS/SDK/Services/Navigation";
 import { KeyCode } from "VSS/Utils/UI";
 
 import { showGalleryDialog } from "../../dialog/showGalleryDialog";
@@ -234,10 +233,9 @@ export class FileThumbNail extends React.Component<IFileThumbNailProps, {}> {
                 link.focus();
             } else {
                 setStatus("downloading files...");
-                const navigationService = await VSS.getService(VSS.ServiceIds.Navigation) as HostNavigationService;
                 trackEvent("download", {trigger: e.type, forceDownload: !!forceDownload + "", ...getProps(selected)});
                 for (const file of selected) {
-                    navigationService.openNewWindow(getFileUrl(file, !!forceDownload), "");
+                    window.open(getFileUrl(file, !!forceDownload), "_blank");
                 }
             }
         });
