@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "gulp"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -19,7 +18,7 @@
   "devDependencies": {
     "@types/applicationinsights-js": "^1.0.5",
     "@types/react-dom": "^16.0.4",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
