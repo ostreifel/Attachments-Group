@@ -12,39 +12,38 @@ const args =  yargs.argv;
 
 const distFolder = 'dist';
 
-gulp.task('clean', () => {
-    return gulp.src([distFolder, '*.vsix'])
+gulp.task('clean', gulp.series(() => {
+    return gulp.src([distFolder, '*.vsix'], {allowEmpty: true})
         .pipe(clean());
-});
+}));
 
-gulp.task('tslint', () => {
+gulp.task('tslint', gulp.series(() => {
     return gulp.src(["scripts/**/*ts", "scripts/**/*tsx"])
         .pipe(tslint({
             formatter: "verbose",
             fix: true,
         }))
         .pipe(tslint.report());
-});
-gulp.task('styles', ['clean', 'tslint'], () => {
+}));
+gulp.task('styles', gulp.series(() => {
     return gulp.src("styles/**/*scss")
         .pipe(sass())
         .pipe(gulp.dest(distFolder));
-});
+}));
 
-gulp.task('build', ['styles'], () => {
-    execSync(`webpack`, {
+gulp.task('copy', gulp.series(() => {
+    return gulp.src('node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js')
+        .pipe(gulp.dest(distFolder));
+}));
+
+gulp.task('build', gulp.parallel('styles', 'tslint', 'copy', async () => {
+    return execSync(`webpack`, {
         stdio: [null, process.stdout, process.stderr]
     });
     // return webpack(require('./webpack.config.js'));
-});
+}));
 
-
-gulp.task('copy', ['build'], () => {
-    gulp.src('node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js')
-        .pipe(gulp.dest(distFolder));
-});
-
-gulp.task('package', ['copy'], () => {
+gulp.task('package', gulp.series('clean', 'build', async () => {
     const overrides = {}
     if (yargs.argv.release) {
         overrides.public = true;
@@ -66,7 +65,6 @@ gulp.task('package', ['copy'], () => {
             console.log(stderr);
             
         });
+}));
 
-});
-
-gulp.task('default', ['package']);
+gulp.task('default', gulp.series('package'));
