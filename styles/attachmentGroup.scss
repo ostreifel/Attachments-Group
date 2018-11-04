@@ -1,4 +1,5 @@
 :root {
+    /* Alias theme variables with defaults */
     /* Names assume light theme */
     --black: rgba(var(--palette-neutral-100, 0, 0, 0));
     --white: rgba(var(--palette-neutral-0, 255, 255, 255));
@@ -6,7 +7,7 @@
     --aliceblue: rgba(var(--palette-primary-tint-40, 239, 246, 252));
     --darkaliceblue: rgba(var(--palette-primary-tint-30, 222, 236, 249));
     --red: rgba(var(--palette-accent1, 218, 10, 0));
-    --lightgray: rga(var(--palette-neutral-6, 239, 239, 239))
+    --lightgray: rgba(var(--palette-neutral-10, 218, 218, 218));
 }
 
 .info {
