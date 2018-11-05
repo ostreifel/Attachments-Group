@@ -67,7 +67,7 @@
             }
             .options {
                 position: absolute;
-                background-color: --white;
+                background-color: var(--white);
                 top: 0px;
                 right: 0px;
                 .ms-Button-menuIcon {
@@ -103,7 +103,7 @@
                     top: 0px;
                     left: 0px;
                     font-size: 95px;
-                    color: --white;
+                    color: var(--white);
                     text-shadow:
                     -1px -1px 0 var(--black),
                     1px -1px 0 var(--black),
