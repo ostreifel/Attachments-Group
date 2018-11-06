@@ -25,11 +25,16 @@ gulp.task('tslint', gulp.series(() => {
         }))
         .pipe(tslint.report());
 }));
-gulp.task('styles', gulp.series(() => {
-    return gulp.src("styles/**/*scss")
-        .pipe(sass())
-        .pipe(gulp.dest(distFolder));
-}));
+gulp.task('styles', gulp.parallel(async () => {
+    execSync("node ./node_modules/sass/sass.js ./styles/attachmentGroup.scss ./dist/attachmentGroup.css", {
+        stdio: [null, process.stdout, process.stderr]
+    });
+}, async () => {
+    execSync("node ./node_modules/sass/sass.js ./styles/imageGallery.scss ./dist/imageGallery.css", {
+        stdio: [null, process.stdout, process.stderr]
+    });
+}
+));
 
 gulp.task('copy', gulp.series(() => {
     return gulp.src('node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js')

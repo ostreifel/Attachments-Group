@@ -1,14 +1,4 @@
-:root {
-    /* Alias theme variables with defaults */
-    /* Names assume light theme */
-    --black: rgba(var(--palette-neutral-100, 0, 0, 0));
-    --white: rgba(var(--palette-neutral-0, 255, 255, 255));
-    --blue: rgba(var(--palette-primary-shade-10, 16, 110, 190));
-    --aliceblue: rgba(var(--palette-primary-tint-40, 239, 246, 252));
-    --darkaliceblue: rgba(var(--palette-primary-tint-30, 222, 236, 249));
-    --red: rgba(var(--palette-accent1, 218, 10, 0));
-    --lightgray: rgba(var(--palette-neutral-10, 218, 218, 218));
-}
+@import 'colors';
 
 .info {
     float: right;
@@ -17,8 +7,8 @@
     }
     .callout {
         font-family: "-apple-system",BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Ubuntu,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-        color: var(--black);
-        border: solid 2px var(--lightgray);
+        @include color(black);
+        @include border(solid, 2px, lightgray);
         text-align: center;
         position: absolute;
         z-index: 1;
@@ -26,7 +16,7 @@
         right: 0px;
         max-width: 100%;
         margin-left: -100px;
-        background-color: var(--white);
+        @include background-color(white);
         padding: 8px;
         .message {
             margin-bottom: 10px;
@@ -42,7 +32,7 @@
         flex-wrap: wrap;
         min-height: 78px;
         &.dropping-files {
-            background-color: var(--aliceblue);
+            @include background-color(aliceblue);
         }
         .thumbnail-tile {
             margin: 5px;
@@ -52,10 +42,10 @@
             height: 130px;
             position: relative;
             &:focus, &.selected {
-                background-color: var(--darkaliceblue);
+                @include background-color(darkaliceblue);
             }
             &:hover {
-                border: 1px solid var(--black);
+                @include border(1px, solid, black);
             }
             &:not(:hover) {
                 .title .delete-button {
@@ -67,17 +57,17 @@
             }
             .options {
                 position: absolute;
-                background-color: var(--white);
+                @include background-color(white);
                 top: 0px;
                 right: 0px;
                 .ms-Button-menuIcon {
                     display: none;
                 }
                 &:focus {
-                    border: 1px solid var(--black);
+                    @include border(1px, solid, black);
                 }
                 &:hover {
-                    background-color: var(--aliceblue);
+                    @include background-color(aliceblue);
                 }
             }
             .thumb-box {
@@ -95,7 +85,7 @@
                     }
                 }
                 .thumbnail.file {
-                    color: var(--black);
+                    @include color(black);
                     font-size: 95px;
                 }
                 .overlay {
@@ -103,12 +93,17 @@
                     top: 0px;
                     left: 0px;
                     font-size: 95px;
-                    color: var(--white);
+                    @include color(white);
                     text-shadow:
-                    -1px -1px 0 var(--black),
-                    1px -1px 0 var(--black),
-                    -1px 1px 0 var(--black),
-                    1px 1px 0 var(--black);
+                        -1px -1px 0 getColorLiteral(black),
+                        1px -1px 0 getColorLiteral(black),
+                        -1px 1px 0 getColorLiteral(black),
+                        1px 1px 0 getColorLiteral(black);
+                    text-shadow:
+                        -1px -1px 0 getColorVariable(black),
+                        1px -1px 0 getColorVariable(black),
+                        -1px 1px 0 getColorVariable(black),
+                        1px 1px 0 getColorVariable(black);
                 }
             }
             .title {
@@ -130,20 +125,20 @@
             .add-button {
                 border: 1px solid transparent;
                 margin-top: 5px;
-                color: var(--black);
+                @include color(black);
                 .ms-button-icon {
-                    color: var(--blue);
+                    @include color(blue);
                 }
                 &:focus {
-                    background-color: var(--aliceblue);
+                    @include background-color(aliceblue);
                 }
                 &:hover {
-                    border: 1px solid var(--black);
+                    @include border(1px, solid, black);
                 }
             }
         }
     }
     .error-message {
-        color: var(--red);
+        @include color(red);
     }
 }
