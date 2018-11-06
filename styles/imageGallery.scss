@@ -1,16 +1,4 @@
-:root {
-    /* Alias theme variables with defaults */
-    /* Names assume light theme */
-    --black: rgba(var(--palette-neutral-100, 0, 0, 0));
-    --white: rgba(var(--palette-neutral-0, 255, 255, 255));
-    --blue: rgba(var(--palette-primary-shade-10, 16, 110, 190));
-    --aliceblue: rgba(var(--palette-primary-tint-40, 239, 246, 252));
-    --darkaliceblue: rgba(var(--palette-primary-tint-30, 222, 236, 249));
-    --red: rgba(var(--palette-accent1, 218, 10, 0));
-    --lightgray: rgba(var(--palette-neutral-10, 218, 218, 218));
-    --darkgray: rgba(var(--palette-neutral-80, 51, 51, 51));
-    --gray: rgba(var(--palette-neutral-60, 102, 102, 102));
-}
+@import "colors";
 .gallery-body {
     position: absolute;
     top: 0;
@@ -22,18 +10,18 @@
     }
     .gallery {
         margin: 5px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        background: var(--white);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        @include background-color(white);
         height: 100%;
         .center {
-            color: var(--black);
-            border: 1px solid var(--gray);
+            @include color(black);
+            @include border(1px, solid, gray);
             max-height: 100%;
             max-width: calc(100% - 120px);
             &:focus {
-                outline: 2px solid var(--black);
+                @include outline(2px, solid, black);
             }
             &.image {
                 background-image: url('../img/checkerboard.png');
@@ -45,13 +33,13 @@
             &.text {
                 height: 100%;
                 width: calc(100% - 120px);
-                background-color: var(--white);
-                color: var(--black);
+                @include background-color(white);
+                @include color(black);
                 white-space: pre-wrap;
                 word-break: break-word;
                 overflow-y: auto;
                 &.loading {
-                    background-color: var(--lightgray);
+                    @include background-color(lightgray);
                 }
             }
         }
@@ -64,14 +52,14 @@
             height: 100%;
             align-items: center;
             &:focus {
-                outline: 2px solid var(--black);
+                @include outline(2px, solid, black);
             }
             .chevron-button {
-                color: var(--black);
+                @include color(black);
                 font-size: 50px;
             }
             &:hover .chevron-button {
-                color: var(--darkgray);
+                @include color(darkgray);
             }
         }
     }
