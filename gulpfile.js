@@ -43,7 +43,7 @@ gulp.task('copy', gulp.series(() => {
 
 gulp.task('build', gulp.parallel('styles', 'tslint', 'copy', async () => {
     const option = yargs.argv.release ? "-p" : "-d";
-    execSync(`webpack ${option}`, {
+    execSync(`node ./node_modules/webpack-cli/bin/cli.js ${option}`, {
         stdio: [null, process.stdout, process.stderr]
     });
     // return webpack(require('./webpack.config.js'));

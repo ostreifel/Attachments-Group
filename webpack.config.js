@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require("path");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
     entry: {
@@ -29,6 +30,9 @@ module.exports = {
         { test: /\.tsx?$/, loader: "ts-loader" }
       ]
     },
+    plugins: [
+      new BundleAnalyzerPlugin()
+    ],  
     devtool: "source-map",
     mode: "production"
 };
