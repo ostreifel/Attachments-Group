@@ -35,7 +35,6 @@ module.exports = {
   plugins: [
     new BundleAnalyzerPlugin({
       openAnalyzer: false,
-      generateStatsFile: true,
       reportFilename: "bundle-analysis.html",
       analyzerMode: "static"
     })
