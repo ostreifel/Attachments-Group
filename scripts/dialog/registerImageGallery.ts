@@ -1,3 +1,4 @@
+import "promise-polyfill/src/polyfill";
 import { KeyCode } from "VSS/Utils/UI";
 import { IContextOptions } from "./IContextOptions";
 import { showGallery } from "./showGallery";

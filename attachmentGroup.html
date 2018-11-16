@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8" />
     <script inline src="dist/VSS.SDK.min.js"></script>
-    <script src="https://www.promisejs.org/polyfills/promise-6.1.0.js"></script>
     <link inline href="dist/attachmentGroup.css" rel="stylesheet" />
 </head>
 <body>
@@ -26,7 +25,17 @@
         });
         
         // Load main entry point for extension
-        VSS.require(["dist/registerAttachmentGroup"], function () {
+        VSS.require([
+            "TFS/WorkItemTracking/Contracts",
+            "TFS/WorkItemTracking/RestClient",
+            "VSS/Utils/Core",
+            "VSS/Utils/UI",
+            "VSS/Utils/Date",
+            "VSS/WebApi/Contracts",
+            "TFS/WorkItemTracking/Services",
+            "TFS/WorkItemTracking/ExtensionContracts",
+            "dist/registerAttachmentGroup"
+        ], function () {
             // Loading succeeded
             VSS.notifyLoadSucceeded();
         });

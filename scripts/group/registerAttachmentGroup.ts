@@ -1,4 +1,5 @@
 /// <reference types="vss-web-extension-sdk" />
+import "promise-polyfill/src/polyfill";
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { AttachmentGroupFormEvents } from "./AttachmentGroupFormEvents";
 
