@@ -7,6 +7,7 @@ const {execSync, exec} = require('child_process');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const tslint = require('gulp-tslint');
+const inlinesource = require('gulp-inline-source');
 
 const args =  yargs.argv;
 
@@ -41,12 +42,14 @@ gulp.task('copy', gulp.series(() => {
         .pipe(gulp.dest(distFolder));
 }));
 
-gulp.task('build', gulp.parallel('styles', 'tslint', 'copy', async () => {
+gulp.task('build', gulp.series(gulp.parallel('styles', 'tslint', 'copy'), () => {
     const option = yargs.argv.release ? "-p" : "-d";
     execSync(`node ./node_modules/webpack-cli/bin/cli.js ${option}`, {
         stdio: [null, process.stdout, process.stderr]
     });
-    // return webpack(require('./webpack.config.js'));
+    return gulp.src("*.html")
+        .pipe(inlinesource())
+        .pipe(gulp.dest(distFolder));
 }));
 
 gulp.task('package', gulp.series('clean', 'build', async () => {

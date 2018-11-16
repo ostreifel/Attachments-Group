@@ -38,7 +38,7 @@ export async function showTextFile(file: IFileAttachment, id: string) {
     const text = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.addEventListener("loadend", () => {
-            resolve(reader.result);
+            resolve(reader.result as string);
         });
         reader.readAsText(blob);
     });
