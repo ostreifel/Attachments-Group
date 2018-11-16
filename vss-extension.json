@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "attachments-group",
-    "version": "1.2.74",
+    "version": "1.2.76",
     "name": "Attachments Group",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Preview image attachments from the work item form",
@@ -67,7 +67,7 @@
             ],
             "properties": {
                 "name": "Attachments",
-                "uri": "attachmentGroup.html",
+                "uri": "dist/attachmentGroup.html",
                 "height": 78
             }
         },
@@ -77,7 +77,7 @@
             "description": "Image gallery",
             "targets": [ ],
             "properties": {
-                "uri": "imageGallery.html",
+                "uri": "dist/imageGallery.html",
                 "registeredObjectId": "dialogCallbacks"
             }
         }
