@@ -142,3 +142,16 @@
         @include color(red);
     }
 }
+.ms-Callout .ms-ContextualMenu-list .ms-ContextualMenu-item button {
+    @include background-color(palette-neutral-0);
+    @include color(palette-neutral-100);
+    &:hover:not([disabled]) {
+        @include background-color(palette-neutral-4);
+    }
+    &:focus {
+        @include background-color(palette-neutral-4);
+    }
+    .ms-Icon {
+        @include color(palette-primary);
+    }
+}
