@@ -37,7 +37,7 @@
     "typescript": "^2.7.2",
     "vss-web-extension-sdk": "^5.141.0",
     "webpack": "^4.24.0",
-    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.1.2"
   }
 }
