@@ -8,7 +8,7 @@ npm run package-dev
 ```
 
 To test the extension:
- - change the publisher in vss-extension.json to you publisher id
+ - change the publisher in vss-extension.json to your publisher id
  - upload the dev version to the marketplace on your publisher account
  - share the private extension with the your account so it can be installed
  - go to the account that the extension was shared with to complete the installation
