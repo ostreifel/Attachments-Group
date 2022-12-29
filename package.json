@@ -32,12 +32,12 @@
     "promise-polyfill": "^8.1.0",
     "rimraf": "^2.6.2",
     "sass": "^1.14.3",
-    "ts-loader": "^4.1.0",
+    "ts-loader": "^9.4.2",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2",
     "vss-web-extension-sdk": "^5.141.0",
-    "webpack": "^4.24.0",
+    "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^5.0.1"
   }
 }
